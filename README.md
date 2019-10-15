@@ -3,7 +3,7 @@ Tools for the model curation process in the HBP
 
 ## Curation schematic
 
-!(docs/process.svg)
+![](docs/process.svg)
 
 
 ## Dependencies
