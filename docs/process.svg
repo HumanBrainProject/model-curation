@@ -213,9 +213,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="1009.1668"
-     inkscape:cy="636.24292"
+     inkscape:zoom="1.979899"
+     inkscape:cx="779.08106"
+     inkscape:cy="889.41089"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -375,19 +375,31 @@
        x="155.75034"
        y="43.647938"
        ry="5.1765571" />
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot5944"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       transform="matrix(0.1244288,0,0,0.1244288,153.07359,14.404554)"><flowRegion
-         id="flowRegion5940"><rect
-           id="rect5938"
-           width="322.03378"
-           height="109.57462"
-           x="60.609154"
-           y="262.87988" /></flowRegion><flowPara
-         style="text-align:center;text-anchor:middle"
-         id="flowPara5942">&quot;New entry&quot; form in the app</flowPara></flowRoot>    <rect
+       style="font-style:normal;font-weight:normal;font-size:4.97715187px;line-height:1.25;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.1244288"
+       x="165.54868"
+       y="50.988708"
+       id="text272"><tspan
+         sodipodi:role="line"
+         x="165.54868"
+         y="50.988708"
+         id="tspan266"
+         style="text-align:start;text-anchor:start;stroke-width:0.1244288"><tspan
+           x="165.54868"
+           y="50.988708"
+           style="text-align:start;text-anchor:start;stroke-width:0.1244288"
+           id="tspan264">&quot;New entry&quot; </tspan></tspan><tspan
+         sodipodi:role="line"
+         x="161.42697"
+         y="57.210148"
+         id="tspan270"
+         style="text-align:start;text-anchor:start;stroke-width:0.1244288"><tspan
+           x="161.42697"
+           y="57.210148"
+           style="text-align:start;text-anchor:start;stroke-width:0.1244288"
+           id="tspan268">form in the app</tspan></tspan></text>
+    <rect
        ry="5.1765571"
        y="43.647938"
        x="85.320854"
@@ -395,19 +407,22 @@
        width="49.64185"
        id="rect5946"
        style="fill:#e3dbdb;fill-opacity:1;stroke:none;stroke-width:0.99324614;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.19607843" />
-    <flowRoot
-       transform="matrix(0.13303304,0,0,0.13303304,79.719187,14.850438)"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       id="flowRoot5954"
-       xml:space="preserve"><flowRegion
-         id="flowRegion5950"><rect
-           y="262.87988"
-           x="60.609154"
-           height="109.57462"
-           width="322.03378"
-           id="rect5948" /></flowRegion><flowPara
-         id="flowPara5952"
-         style="text-align:center;text-anchor:middle">List of models</flowPara></flowRoot>    <path
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:5.32132149px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.13303304"
+       x="110.20406"
+       y="54.53014"
+       id="text262"><tspan
+         sodipodi:role="line"
+         x="110.20406"
+         y="54.53014"
+         id="tspan260"
+         style="stroke-width:0.13303304"><tspan
+           x="110.20406"
+           y="54.53014"
+           style="text-align:center;text-anchor:middle;stroke-width:0.13303304"
+           id="tspan258">List of models</tspan></tspan></text>
+    <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        id="path6906"
@@ -436,19 +451,22 @@
            y="269.05524"
            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#483737;stroke-width:0.21250302"
            id="tspan976">HBP Knowledge Graph</tspan></tspan></text>
-    <flowRoot
-       transform="matrix(0.11615949,0,0,0.11615949,91.900437,43.584001)"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       id="flowRoot7342"
-       xml:space="preserve"><flowRegion
-         id="flowRegion7338"><rect
-           y="262.87988"
-           x="60.609154"
-           height="109.57462"
-           width="322.03378"
-           id="rect7336" /></flowRegion><flowPara
-         id="flowPara7340"
-         style="text-align:center;text-anchor:middle">underlies</flowPara></flowRoot>    <text
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.64637947px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.11615949"
+       x="116.95837"
+       y="78.230835"
+       id="text284"><tspan
+         sodipodi:role="line"
+         x="116.95837"
+         y="78.230835"
+         id="tspan282"
+         style="stroke-width:0.11615949"><tspan
+           x="116.95837"
+           y="78.230835"
+           style="text-align:center;text-anchor:middle;stroke-width:0.11615949"
+           id="tspan280">underlies</tspan></tspan></text>
+    <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:5.2579236px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.13144809"
        x="56.95948"
@@ -696,19 +714,22 @@
        ry="6.5239258"
        id="ellipse10770"
        style="fill:#ff9955;fill-opacity:0.39215686;stroke:none;stroke-width:0.27453357;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.39215686" />
-    <flowRoot
-       transform="matrix(0.11615949,0,0,0.11615949,151.29245,42.007219)"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       id="flowRoot10778"
-       xml:space="preserve"><flowRegion
-         id="flowRegion10774"><rect
-           y="262.87988"
-           x="60.609154"
-           height="109.57462"
-           width="322.03378"
-           id="rect10772" /></flowRegion><flowPara
-         id="flowPara10776"
-         style="text-align:center;text-anchor:middle">increments</flowPara></flowRoot>    <path
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.64637947px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.11615949"
+       x="178.82593"
+       y="76.654053"
+       id="text278"><tspan
+         sodipodi:role="line"
+         x="178.82593"
+         y="76.654053"
+         id="tspan276"
+         style="stroke-width:0.11615949"><tspan
+           x="178.82593"
+           y="76.654053"
+           style="text-align:center;text-anchor:middle;stroke-width:0.11615949"
+           id="tspan274">increments</tspan></tspan></text>
+    <path
        style="fill:none;stroke:#6c5d53;stroke-width:1.25645638;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 49.747293,7.8291913 -3.942288,6.3821977 0.375636,37.917762 3.566652,6.75762"
        id="path10780"
