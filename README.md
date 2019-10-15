@@ -1,12 +1,10 @@
 # Model curation process
-Tools for the model curation process in the HBP
 
-## Curation schematic
+A python module for the model curation process in the HBP. It curates entries from their submission in the Model Catalog to their publications in the HBP Knowledge Graph.
 
-![Visualization](docs/process.svg)
+## Curation schematic (current pipeline)
 
-![doc2](docs/process.svg)
-
+![schematic](docs/process.svg)
 
 ## Dependencies
 
