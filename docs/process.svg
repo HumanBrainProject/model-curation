@@ -214,7 +214,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.49497475"
-     inkscape:cx="1044.5221"
+     inkscape:cx="1009.1668"
      inkscape:cy="636.24292"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -236,7 +236,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -976,23 +976,50 @@
            y="203.59297"
            style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';text-align:start;text-anchor:start;stroke-width:0.17817833"
            id="tspan1012">no</tspan></tspan></text>
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot11113"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       transform="matrix(0.14063979,0,0,0.14063979,108.58285,254.73039)"><flowRegion
-         id="flowRegion11107"><rect
-           id="rect11105"
-           width="477.87305"
-           height="147.3302"
-           x="60.609154"
-           y="262.87988" /></flowRegion><flowPara
-         style="text-align:start;text-anchor:start"
-         id="flowPara11109">- public</flowPara><flowPara
-         id="flowPara11111"
-         style="text-align:start;text-anchor:start">- DOI provided</flowPara><flowPara
-         style="text-align:start;text-anchor:start"
-         id="flowPara11115">- all required fields</flowPara></flowRoot>    <ellipse
+       style="font-style:normal;font-weight:normal;font-size:5.62559175px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.1406398"
+       x="117.10694"
+       y="296.67896"
+       id="text256"><tspan
+         sodipodi:role="line"
+         x="117.10694"
+         y="296.67896"
+         id="tspan244"
+         style="stroke-width:0.1406398"><tspan
+           x="117.10694"
+           y="296.67896"
+           style="text-align:start;text-anchor:start;stroke-width:0.1406398"
+           id="tspan240">- public</tspan><tspan
+           dx="0"
+           x="137.86229"
+           y="296.67896"
+           style="text-align:start;text-anchor:start;stroke-width:0.1406398"
+           id="tspan242" /></tspan><tspan
+         sodipodi:role="line"
+         x="117.10694"
+         y="303.71094"
+         id="tspan250"
+         style="stroke-width:0.1406398"><tspan
+           x="117.10694"
+           y="303.71094"
+           style="text-align:start;text-anchor:start;stroke-width:0.1406398"
+           id="tspan246">- DOI provided</tspan><tspan
+           dx="0"
+           x="157.83754"
+           y="303.71094"
+           style="text-align:start;text-anchor:start;stroke-width:0.1406398"
+           id="tspan248" /></tspan><tspan
+         sodipodi:role="line"
+         x="117.10694"
+         y="310.74292"
+         id="tspan254"
+         style="stroke-width:0.1406398"><tspan
+           x="117.10694"
+           y="310.74292"
+           style="text-align:start;text-anchor:start;stroke-width:0.1406398"
+           id="tspan252">- all required fields</tspan></tspan></text>
+    <ellipse
        transform="rotate(21.333919)"
        cx="344.30139"
        cy="154.231"
