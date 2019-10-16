@@ -4,9 +4,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 from gspread_formatting import *
 
 scope = ['https://spreadsheets.google.com/feeds']
-credentials = ServiceAccountCredentials.from_json_keyfile_name('VF-DataSync-8e2e5296f1c5.json', scope)
+credentials = ServiceAccountCredentials.from_json_keyfile_name('XXX', scope)
 gc = gspread.authorize(credentials)
-sc = gc.open_by_url("https://docs.google.com/spreadsheets/d/1vOImr5ZJsus8HFVHK6OKmNXNN8mFQQTFQ59izPoNmQI/edit#gid=1434817642")
+sc = gc.open_by_url("https://docs.google.com/spreadsheets/d/XXX")
 
 # Specify requirements
 req_sheets = ['Signalling cascades', 'Inhibition and calcium cascades', 'Molecular Signalling Cascades' , 'Molecular Modelling', 'Multiscale', 'Human neurons', 'Basal ganglia', 'Cerebellum', 'Hippocampus', 'SSCx', 'Whole mouse brain']

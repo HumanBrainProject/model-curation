@@ -1,27 +1,43 @@
-* Model curation process
+#+title: Model curation process
 
 A python module for the model curation process in the HBP. It curates entries from their submission in the Model Catalog to their publications in the HBP Knowledge Graph.
 
-** Curation schematic (current pipeline)
+* Curation schematic (current pipeline)
 
-![schematic](docs/process.svg)
+[[docs/process.svg]]
 
-** Dependencies
+* Dependencies
 
 Two python modules of the Human Brain Project ecosystem:
 
-- ![fairgraph](https://github.com/HumanBrainProject/fairgraph) A high-level Python API for the HBP Knowledge Graph
-- ![hbp-validation-client](https://github.com/HumanBrainProject/hbp-validation-client) A Python package for working with the Human Brain Project Model Validation Framework.
+- [[https://github.com/HumanBrainProject/fairgraph][fairgraph]]: A high-level Python API for the HBP Knowledge Graph
+- [[https://github.com/HumanBrainProject/hbp-validation-client][hbp-validation-client]]: A Python package for working with the Human Brain Project Model Validation Framework.
 
 The Python API for working with Google Spreadsheets:
 
-- ![Google Spreadsheet API](https://developers.google.com/sheets/api)
+- [[https://developers.google.com/sheets/api][Google Spreadsheet API]]
 
 Follow the instructions to get the credentials at:
 
 https://developers.google.com/sheets/api/quickstart/python
 
-** Configuration file
+* Configuration file
+
+A file 
+#+BEGIN_SRC python
+import os
+
+# location of your json files for the HBP logins, as a python path
+hbp_token_file=os.path.join(os.path.expanduser('~'), 'Downloads', 'HBP.json')
+hbp_storage_token_file=os.path.join(os.path.expanduser('~'), 'Downloads', 'config.json')
+
+# Google spreadsheet credential logins
+...
+
+# ID of Google Spreadsheets 
+SGA2_SP6_SPREADSHEET_ID= '...' 
+SGA2_SP3_SPREADSHEET_ID='...'
 
 
+#+END_SRC python
 
