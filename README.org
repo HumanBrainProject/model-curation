@@ -2,11 +2,11 @@
 
 A python module for the model curation process in the HBP. It curates entries from their submission in the Model Catalog to their publications in the HBP Knowledge Graph.
 
-* Curation schematic (current pipeline)
+** Curation schematic (current pipeline)
 
 [[docs/process.svg]]
 
-* Dependencies
+** Dependencies
 
 Two python modules of the Human Brain Project ecosystem:
 
@@ -21,7 +21,7 @@ Follow the instructions to get the credentials at:
 
 https://developers.google.com/sheets/api/quickstart/python
 
-* Configuration file
+** Configuration file
 
 A file 
 #+BEGIN_SRC python
