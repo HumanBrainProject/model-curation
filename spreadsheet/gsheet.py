@@ -1,16 +1,12 @@
-from __future__ import print_function
-import pickle
-import os.path
+import pickle, os.path
+import numpy as np
+
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
-
-# The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = '18baJz2Vup_zUpNoi7-ugc-kz-AHZqP2wCxq3wvvrsmw'
-SAMPLE_RANGE_NAME = 'Model_entries!1:10'
 
 def initialize_gsheet():
 
@@ -27,7 +23,7 @@ def initialize_gsheet():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+                '../credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
@@ -40,57 +36,49 @@ def initialize_gsheet():
     
     return sheet
 
+def write_author_names():
 
-def main():
+    sheet = initialize_gsheet()
+    
+def read_from_spreadsheet(n=1000):
+
+    # The ID and range of a sample spreadsheet.
+    # SAMPLE_RANGE_NAME = 'Model_entries!1:10'
+    SAMPLE_RANGE_NAME = 'Model_entries!1:%i' % n
+
+    
     """Shows basic usage of the Sheets API.
     Prints values from a sample spreadsheet.
     """
     
     sheet = initialize_gsheet()
     
-    result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+    result = sheet.values().get(spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET'],
                                 range=SAMPLE_RANGE_NAME).execute()
     values = result.get('values', [])
+
+    Models_dict = {}
+    for key in values[0]:
+        Models_dict[key] = []
 
     if not values:
         print('No data found.')
     else:
-        print('Name, Major:')
-        for row in values:
-            # Print columns A and E, which correspond to indices 0 and 4.
-            print(row)
+        for row in values[1:]:
+            for i, key in enumerate(values[0]):
+                try:
+                    print(i, key, row[i])
+                    Models_dict[key].append(row[i])
+                    print('-->', Models_dict[key])
+                except IndexError:
+                    print(i, key)
+                    Models_dict[key].append('')
+                
+    return Models_dict
+
 
 if __name__ == '__main__':
-    main()
+    # print(read_from_spreadsheet(10))
+    # main()
+    # write_author_names()
 
-# spreadsheet_id = '1mr2Lt8dogAlWNp3tfR-c2Z1LLNdeNYuUJEivI3wfGV0'
-
-# requests = []
-# # Change the spreadsheet's title.
-# requests.append({
-#     'updateSpreadsheetProperties': {
-#         'properties': {
-#             'title': 'Models'
-#         },
-#         'fields': 'title'
-#     }
-# })
-# # Find and replace text
-# requests.append({
-#     'findReplace': {
-#         'find': 0,
-#         'replacement': 1,
-#         'allSheets': True
-#     }
-# })
-# # Add additional requests (operations) ...
-
-# body = {
-#     'requests': requests
-# }
-# response = service.spreadsheets().batchUpdate(
-#     spreadsheetId=spreadsheet_id,
-#     body=body).execute()
-# find_replace_response = response.get('replies')[1].get('findReplace')
-# print('{0} replacements made.'.format(
-#     find_replace_response.get('occurrencesChanged')))
