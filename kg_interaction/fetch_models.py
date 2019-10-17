@@ -17,4 +17,7 @@ def get_list_of_models(n=100):
         List['custodian'].append(str(model.custodian))
         List['name'].append(model.name)
     return List
-print(get_list_of_models(10))
+
+if __name__ == '__main__':
+
+    print(get_list_of_models(10))
