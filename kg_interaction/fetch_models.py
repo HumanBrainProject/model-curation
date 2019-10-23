@@ -1,23 +1,29 @@
 import os
-import numpy as np
-
 from fairgraph.client import KGClient
 from fairgraph.uniminds import Person, ModelInstance, Dataset
 
-token = os.environ["HBP_token"]
-#nexus_endpoint = "https://nexus-int.humanbrainproject.org/v0"
-nexus_endpoint = "https://nexus.humanbrainproject.org/v0"
-client = KGClient(token, nexus_endpoint=nexus_endpoint)
+client = KGClient(os.environ["HBP_token"])
+models = ModelInstance.list(client, api="query")#, resolved=True)
+for i, m in enumerate(models):
+    print("- %i) %s" %(i, m.name))
 
 
-def get_list_of_models(n=100):
+minst = ModelInstance(name="Test by yann"
+                      description='this is a test description',
+                      brain_region='brain',
+                      species='Homo Sapiens',
+                      model_of=None,
+                      version='v1')
+minst.save(client)
+# def get_list_of_models(n=100):
 
-    List = {'name':[], 'custodian':[]}
-    for model in Dataset.list(client, size=n):
-        List['custodian'].append(str(model.custodian))
-        List['name'].append(model.name)
-    return List
+#     List = {'name':[], 'custodian':[]}
+#     for model in ModelInstance.list(client, size=n):
+#         List['custodian'].append(str(model.custodian))
+#         List['name'].append(model.name)
+#     return List
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    print(get_list_of_models(10))
+#     print(get_list_of_models(n=10))
+#     print(ModelInstance.list(client))

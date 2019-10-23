@@ -6,6 +6,10 @@ A python module for the model curation process in the HBP. It curates entries fr
 
 [[docs/process.svg]]
 
+** Use of scripts
+
+run `source setting_env_variables.sh` in the shell 
+
 ** Dependencies
 
 Two python modules of the Human Brain Project ecosystem:

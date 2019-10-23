@@ -2,7 +2,7 @@
 
 output=$(python -c '
 import json, os
-from env_variables import SPREADSHEETS_ID, hbp_token_file, hbp_storage_token_file
+from env_variables import SPREADSHEETS_ID, hbp_token_file, hbp_storage_token_file, VALIDATION_FRAMEWORK_INFOS
 
 if os.path.isfile(hbp_token_file): # defined in env_variables
    data1=json.load(open(hbp_token_file))
@@ -16,6 +16,8 @@ else:
    print("echo ** /!\ ", hbp_storage_token_file, "not found **")
 magic = ""
 for key, val in SPREADSHEETS_ID.items():
+    magic+="export %s=%s\n" % (key, val);
+for key, val in VALIDATION_FRAMEWORK_INFOS.items():
     magic+="export %s=%s\n" % (key, val);
 magic+="export HBP_token="+str(data1["access_token"])+"\n";
 magic+="export HBP_STORAGE_TOKEN="+str(data2["auth"]["token"]["access_token"])+"" ; 
