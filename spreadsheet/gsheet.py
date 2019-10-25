@@ -42,7 +42,7 @@ def get_alphabet_key(index):
     else:
         return string.ascii_uppercase[int(index/len(string.ascii_uppercase))-1]+string.ascii_uppercase[index%len(string.ascii_uppercase)]
         
-def get_raw_key_map(Sheet='Model_entries',
+def get_raw_key_map(Sheet='Model Entries',
                     spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET']):
     """
     Get top values from the spreadsheet
@@ -58,7 +58,7 @@ def get_raw_key_map(Sheet='Model_entries',
 
 
 def read_from_spreadsheet(Range=[1,2],
-                          Sheet='Model_entries',
+                          Sheet='Model Entries',
                           spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET']):
     """Shows basic usage of the Sheets API.
     Prints values from a sample spreadsheet.
@@ -89,32 +89,57 @@ def read_from_spreadsheet(Range=[1,2],
                 
     return Models_dict
 
-def write_single_value_on_spreadsheet(key, value, line,
-                                      key_letter_map,
-                                      Sheet='Model_entries',
+def write_single_value_on_spreadsheet(value, key, line,
+                                      Sheet='Model Entries',
                                       valueInputOption='USER_ENTERED', # USER_ENTERED or RAW
                                       spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET']):
 
     sheet = initialize_gsheet()
     result = sheet.values().update(
         spreadsheetId=spreadsheetId,
-        range='%s!%s%i' % (Sheet, key_letter_map[key], line),
+        range='%s!%s%i' % (Sheet, key, line),
         valueInputOption=valueInputOption, # USER_ENTERED or RAW
         body={'values': [[value]]}).execute()
 
 
-def write_line_entry_on_spreadsheet(values, line,
-                                    key_letter_map,
-                                    Sheet='Model_entries',
-                                    valueInputOption='USER_ENTERED', # USER_ENTERED or RAW
-                                    spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET']):
-
+def write_row_on_spreadsheet(values, row_letter, starting_index=1,
+                             Sheet='Model Entries',
+                             valueInputOption='USER_ENTERED', # USER_ENTERED or RAW
+                             spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET']):
     sheet = initialize_gsheet()
-    result = sheet.values().update(
+
+    batch_update_values_request_body = {
+        'value_input_option': valueInputOption,
+        # The new values to apply to the spreadsheet.
+        'data': [
+            {
+                'range':'%s!%s%i:%s%i' % (Sheet, row_letter, starting_index, row_letter, starting_index+len(values)),
+                'values':[[v] for v in values],
+            },
+        ]
+    }
+    result = sheet.values().batchUpdate(
         spreadsheetId=spreadsheetId,
-        range='%s!%i' % (Sheet, line),
-        valueInputOption=valueInputOption, # USER_ENTERED or RAW
-        body={'values': [[Model_dict[key_letter_map[i]] for i in range(len(key_letter_map.keys()))]]}).execute()
+        body=batch_update_values_request_body).execute()
+
+def write_line_on_spreadsheet(values, line, starting_letter_index=0,
+                              Sheet='Model Entries',
+                              valueInputOption='USER_ENTERED', # USER_ENTERED or RAW
+                              spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET']):
+    sheet = initialize_gsheet()
+
+    batch_update_values_request_body = {
+        'value_input_option': valueInputOption,
+        'data': []}
+    for i in range(len(values)):
+        batch_update_values_request_body['data'].append({
+            'range':'%s!%s%i:%s%i' % (Sheet, get_alphabet_key(starting_letter_index+i), line, get_alphabet_key(starting_letter_index+i), line),
+            'values':[[values[i]]],
+            
+        })
+    result = sheet.values().batchUpdate(
+        spreadsheetId=spreadsheetId,
+        body=batch_update_values_request_body).execute()
     
 
 if __name__ == '__main__':
@@ -122,13 +147,16 @@ if __name__ == '__main__':
     #                             Sheet='KG',
     #                             spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET_PREVIOUS']))
     # print(read_from_spreadsheet())
-    key_letter_map = get_raw_key_map()
-    write_single_value_on_spreadsheet('Model Alias', 'ntwk-Model-blabla', 2, key_letter_map)
-    write_single_value_on_spreadsheet('Model Name', 'A network model about blabla', 2, key_letter_map)
-    write_single_value_on_spreadsheet('Custodian Name', 'Y. Zerlaut', 2, key_letter_map)
-    write_single_value_on_spreadsheet('Description', 1, 2, key_letter_map)
-    write_single_value_on_spreadsheet('Custodian Name', 'Y. Zerlaut', 2, key_letter_map)
-    write_single_value_on_spreadsheet('Custodian Name', 'Y. Zerlaut', 2, key_letter_map)
+    # key_letter_map = get_raw_key_map()
+    # write_single_value_on_spreadsheet('ntwk-Model-blabla', 'A', 2)
+    # write_row_on_spreadsheet(range(10), 'C')
+    write_line_on_spreadsheet(range(10), 3)
+    # write_line_entry_on_spreadsheet(['Model', 'Author'], 2, valueInputOption='RAW')
+    # write_single_value_on_spreadsheet('Model Name', 'A network model about blabla', 2, key_letter_map)
+    # write_single_value_on_spreadsheet('Custodian Name', 'Y. Zerlaut', 2, key_letter_map)
+    # write_single_value_on_spreadsheet('Description', 1, 2, key_letter_map)
+    # write_single_value_on_spreadsheet('Custodian Name', 'Y. Zerlaut', 2, key_letter_map)
+    # write_single_value_on_spreadsheet('Custodian Name', 'Y. Zerlaut', 2, key_letter_map)
     # print(get_raw_key_labels())
     # import sys
     # sys.path.append('./')
