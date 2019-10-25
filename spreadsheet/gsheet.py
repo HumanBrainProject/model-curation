@@ -60,7 +60,8 @@ def get_raw_key_map(Sheet='Model Entries',
 def read_from_spreadsheet(Range=[1,2],
                           Sheet='Model Entries',
                           spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET']):
-    """Shows basic usage of the Sheets API.
+    """
+    Shows basic usage of the Sheets API.
     Prints values from a sample spreadsheet.
     """
 
