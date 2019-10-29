@@ -1,4 +1,4 @@
-#+title: Use of Faigraph
+#+title: Use of Fairgraph
 
 We document here the use of [[https://github.com/HumanBrainProject/fairgraph][fairgraph]] in the model curation pipeline.
 
