@@ -71,24 +71,18 @@ def read_from_spreadsheet(Range=[1,2],
                                 range='%s!%i:%i' % (Sheet, Range[0], Range[1])).execute()
     values = result.get('values', [])
 
-    Models_dict = {}
-    for key in values[0]:
-        Models_dict[key] = []
+    models = [] # we read into a list of models
 
     if not values:
         print('No data found.')
+        return []
     else:
-        for row in values[1:]:
-            for i, key in enumerate(values[0]):
-                try:
-                    print(i, key, row[i])
-                    Models_dict[key].append(row[i])
-                    print('-->', Models_dict[key])
-                except IndexError:
-                    print(i, key)
-                    Models_dict[key].append('')
-                
-    return Models_dict
+        keys = values[0]
+        for line in values[1:]:
+            models.append({})
+            for i, key in enumerate(keys):
+                models[-1][key] = line[i]
+        return models
 
 def write_single_value_on_spreadsheet(value, key, line,
                                       Sheet='Model Entries',

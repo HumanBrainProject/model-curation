@@ -1,6 +1,8 @@
 #+title: Model curation process
 
-A python module for the model curation process in the HBP. It curates entries from their submission in the Model Catalog to their publications in the HBP Knowledge Graph.
+A python module for the model curation process in the HBP. 
+
+It curates entries from their submission in the Model Catalog by the HBP contributors to their publications in the HBP Knowledge Graph. The curation process includes automatic processes of database updates together with manual editing of entries in Google Spreadsheets and email interactions with the model contributors.
 
 ** Curation schematic (current pipeline)
 
@@ -8,7 +10,13 @@ A python module for the model curation process in the HBP. It curates entries fr
 
 ** Use of scripts
 
-run `source setting_env_variables.sh` in the shell 
+
+run the =setting_env_variables.sh=  script in the shell 
+
+#+BEGIN_SRC bash
+cd folder_where_you_have_cloned_the_repo/model-curation/
+source setting_env_variables.sh
+#+END_SRC 
 
 ** Dependencies
 
@@ -44,4 +52,10 @@ SGA2_SP3_SPREADSHEET_ID='...'
 
 
 #+END_SRC python
+
+** Stats
+
+A detailed analysis of the curation pipeline is available at:
+
+https://github.com/yzerlaut/model-curation/blob/master/stats/summary.org
 

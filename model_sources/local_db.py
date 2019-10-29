@@ -36,7 +36,11 @@ def load_models():
                 
     return refactor_model_entries(models)
 
-    
+
+def get_model_attributes():
+    models = load_models()
+    return models[0].keys()
+
 if __name__=='__main__':
     create_a_backup_version(load_models())
 

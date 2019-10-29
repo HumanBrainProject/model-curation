@@ -2,10 +2,16 @@ import os
 from fairgraph.client import KGClient
 from fairgraph.uniminds import Person, ModelInstance, Dataset
 
-client = KGClient(os.environ["HBP_token"])
-models = ModelInstance.list(client, api="query")#, resolved=True)
-for i, m in enumerate(models):
-    print("- %i) %s" %(i, m.name))
+
+def KG_db(n=100000):
+
+    client = KGClient(os.environ["HBP_token"])
+    models = ModelInstance.list(client, api="query", resolved=True, size=3)
+
+    return models[0].__attributes__
+
+    for i, m in enumerate(models):
+        print("- %i) %s" %(i, m.name))
 
 
 minst = ModelInstance(name="Test by yann"

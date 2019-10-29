@@ -5,22 +5,6 @@ from spreadsheet import gsheet
 from processing.entries import refactor_model_entries
 
 
-import sys, os, pathlib
-import numpy as np
-import pickle
-
-def save_models_locally():
-    pkl_file = open(os.path.join(pathlib.Path(__file__).resolve().parent, 'model_sources', 'Local_DB.pkl'), 'rb')
-    models = pickle.dump(pkl_file)
-    pkl_file.close()
-
-    for model in models:
-        for key, val in model.items():
-            if len(val.split('None'))>1:
-                model[key] = 'None'
-                
-    return models
-
     
 if __name__=='__main__':
 
@@ -40,12 +24,8 @@ if __name__=='__main__':
                         """)
     args = parser.parse_args()
 
-    # if args.update_plot:
-    #     data = dict(np.load(args.filename))
-    #     data['plot'] = get_plotting_instructions()
-    #     np.savez(args.filename, **data)
-    # else:
-    #     run()
+    if args.Protocol=='SS-to-Local':
+        models = gsheet.read_from_spreadsheet(Range=[1,10000])
+        print(len(models
+))
 
-    # print(gsheet.read_from_spreadsheet())
-    print(args.DISTRIBUTION)
