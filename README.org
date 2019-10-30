@@ -8,6 +8,43 @@ It curates entries from their submission in the Model Catalog by the HBP contrib
 
 [[docs/process.svg]]
 
+** Model template
+
+#+BEGIN_SRC python
+{
+    'name':'', # a string
+    
+    'alias':'', # a string
+    
+    'author':[], # a set of uuid
+
+    'description':'', # a string
+
+    'identifier':'', # an uuid
+
+    'private':'', # a string either "TRUE" or "FALSE"
+
+    # a set of Knowledge Graph metadata
+    # stored here as a string corresponding to their uuid in the Knowledge Graph
+    'associated_dataset':[],
+    'associated_method':[],
+    'associated_experimental_preparation':[],
+    'associated_software':[],
+    
+    'version':[
+	{'source':'',
+	 'name':''},
+	{'source':'',
+	 'name':''},
+    ],
+    
+    'images':[
+	{'url':'',
+	 'caption':''}
+    ],
+}    
+#+END_SRC
+
 ** Use of scripts
 
 
