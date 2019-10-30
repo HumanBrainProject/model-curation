@@ -10,41 +10,54 @@ It curates entries from their submission in the Model Catalog by the HBP contrib
 
 ** Model template
 
-#+begin_src sh :exports results :results output                                 
-  cat model_template.json
-#+end_src 
+The metadata are stored as strings. Either "free" strings or strings corresponding to the UUID in the Knowledge Graph (e.g. the metadata related to the Person Yann Zerlaut has the UUID: =003beed8-1ee8-45ec-8737-785ca6239ef0=).
 
+An empty template is stored in the =model_template.py= file. It reads:
 #+BEGIN_SRC python
-{
-    'name':'', # a string
+template = {
     
-    'alias':'', # a string
+    "name":"", # a string
     
-    'author':[], # a set of uuid
-
-    'description':'', # a string
-
-    'identifier':'', # an uuid
-
-    'private':'', # a string either "TRUE" or "FALSE"
-
-    # a set of Knowledge Graph metadata
-    # stored here as a string corresponding to their uuid in the Knowledge Graph
-    'associated_dataset':[],
-    'associated_method':[],
-    'associated_experimental_preparation':[],
-    'associated_software':[],
+    "alias":"", # a string
     
-    'version':[
-	{'source':'',
-	 'name':''},
-	{'source':'',
-	 'name':''},
+    "author":[], # a set of a KG UUIDs
+
+    "description":"", # a string
+
+    "identifier":"", # a KG UUID -> generated during model curation !
+
+    "private":"", # a string either "TRUE" or "FALSE"
+
+    # ------ KG METADATA -------- # 
+    "abstraction_level":"", # a KG UUID
+    "brain_region":"", # a KG UUID
+    "cell_type":["", ""], # a set of KG UUIDs
+    "code_format":"", # a string
+    "creation_date":"", # a KG UUID
+    "license":"", # a KG UUID
+    "model_scope":"", # a KG UUID
+    "model_type":"", # a KG UUID
+    "organization":"", # a KG UUID
+    "owner":"", # a KG UUID
+    "pla_components":"", # a KG UUID
+    "project":"", # a KG UUID
+    "associated_dataset":[], # a KG UUID
+    "associated_method":[], # a KG UUID
+    "associated_experimental_preparation":[], # a set of KG UUIDs
+    "used_software":[],
+    
+    # ------ VERSIONS -------- # 
+    "version":[
+	{"source":"",
+	 "name":""},
+	{"source":"",
+	 "name":""},
     ],
     
-    'images':[
-	{'url':'',
-	 'caption':''}
+    # ------ VERSIONS -------- # 
+    "images":[
+	{"url":"",
+	 "caption":""}
     ],
 }    
 #+END_SRC

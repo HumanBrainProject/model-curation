@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 
 def get_models():
-    pkl_file = open(os.path.join(pathlib.Path(__file__).resolve().parent,'DjangoDB.pkl'), 'rb')
+    pkl_file = open(os.path.join(pathlib.Path(__file__).resolve().parent,'CaatalogDB.pkl'), 'rb')
     models = pickle.load(pkl_file)
     pkl_file.close()
 

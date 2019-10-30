@@ -3,3 +3,15 @@
 We document here the use of [[https://github.com/HumanBrainProject/fairgraph][fairgraph]] in the model curation pipeline.
 
 [ ... ]
+
+** Prerequisite
+
+As a prerequisite, we describe here the background information 
+
+*** Model metadata
+
+*** Model entries in the Knowledge Graph
+
+
+
+** Fetching the metadata of a 

@@ -1,6 +1,6 @@
 import sys, os
 
-from model_sources import local_db, django_db
+from model_sources import local_db, catalog_db, KG_db, spreadsheet_db
 from spreadsheet import gsheet
 from processing.entries import refactor_model_entries
 

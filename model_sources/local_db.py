@@ -17,29 +17,29 @@ def create_a_backup_version(models):
 
 
 def save_models_locally(models):
-    
+    """ """
     pkl_file = open(os.path.join(pathlib.Path(__file__).resolve().parents[0],
-                                 'LocalDB.pkl'),
-                    'wb')
+                                 'LocalDB.pkl'), 'wb')
     pickle.dump(models, pkl_file)
     pkl_file.close()
 
     
-def load_models():
-    
+def load_models(sorted_by_creation_data=True):
+    """ """
     pkl_file = open(os.path.join(pathlib.Path(__file__).resolve().parents[0],
-                                 'LocalDB.pkl'),
-                    'rb')
+                                 'LocalDB.pkl'), 'rb')
 
-    models = pickle.load(pkl_file)
+    Models = pickle.load(pkl_file)
     pkl_file.close()
                 
-    return refactor_model_entries(models)
-
+    models = refactor_model_entries(Models)
+    dates = np.array([int(model['creation_date']) for model in models])
+    return [models[i] for i in np.argsort(dates)[::-1]]
 
 def get_model_attributes():
     models = load_models()
     return models[0].keys()
+
 
 if __name__=='__main__':
     create_a_backup_version(load_models())
