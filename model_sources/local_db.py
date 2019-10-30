@@ -11,7 +11,7 @@ def create_a_backup_version(models):
     """
     pkl_file = open(os.path.join(str(pathlib.Path(__file__).resolve().parents[0]),
                                  'local_db_backups',
-                                 datetime.now().strftime("%Y.%m.%d-%H:%M:%S.pkl")))
+                                 datetime.now().strftime("%Y.%m.%d-%H:%M:%S.pkl")), 'wb')
     pickle.dump(models, pkl_file)
     pkl_file.close()
 
@@ -24,7 +24,7 @@ def save_models_locally(models):
     pkl_file.close()
 
     
-def load_models(sorted_by_creation_data=True):
+def load_models():
     """ """
     pkl_file = open(os.path.join(pathlib.Path(__file__).resolve().parents[0],
                                  'LocalDB.pkl'), 'rb')
@@ -33,6 +33,7 @@ def load_models(sorted_by_creation_data=True):
     pkl_file.close()
                 
     models = refactor_model_entries(Models)
+    # we sort them by creation date (the last one is the newest)
     dates = np.array([int(model['creation_date']) for model in models])
     return [models[i] for i in np.argsort(dates)[::-1]]
 

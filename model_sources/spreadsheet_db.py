@@ -42,6 +42,7 @@ def get_alphabet_key(index):
     else:
         return string.ascii_uppercase[int(index/len(string.ascii_uppercase))-1]+string.ascii_uppercase[index%len(string.ascii_uppercase)]
         
+
 def get_raw_key_map(Sheet='Model Entries',
                     spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET']):
     """
@@ -136,6 +137,7 @@ def write_line_on_spreadsheet(values, line, starting_letter_index=0,
         spreadsheetId=spreadsheetId,
         body=batch_update_values_request_body).execute()
     
+
 
 if __name__ == '__main__':
     # print(read_from_spreadsheet(Range=[3,100],
