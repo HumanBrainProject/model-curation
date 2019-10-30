@@ -10,6 +10,10 @@ It curates entries from their submission in the Model Catalog by the HBP contrib
 
 ** Model template
 
+#+begin_src sh :exports results :results output                                 
+  cat model_template.json
+#+end_src 
+
 #+BEGIN_SRC python
 {
     'name':'', # a string
