@@ -62,11 +62,22 @@ if __name__=='__main__':
                         """)
     args = parser.parse_args()
 
+    if args.Protocol=='Fetch-Catalog':
+        # N.B. the
+        print('TO BE IMPLEMENTED (now relies on code living in the "hbp-validation-framework" repository)')
     if args.Protocol=='Catalog-to-Local':
+        # read the Catalog DB and update the set of models
         models = from_catalog_to_local_db()
         # always make a backup copy before modifying the LocalDB
         local_db.create_a_backup_version(local_db.load_models())
-        # then sav the new version
+        # then save the new version
+        local_db.save_models_locally(models)
+    if args.Protocol=='Local-to-Spreadsheet':
+        # read the Catalog DB and update the set of models
+        models = from_catalog_to_local_db()
+        # always make a backup copy before modifying the LocalDB
+        local_db.create_a_backup_version(local_db.load_models())
+        # then save the new version
         local_db.save_models_locally(models)
         
     elif args.Protocol=='SS-to-Local':

@@ -5,12 +5,30 @@ import pickle
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 from processing.entries import refactor_model_entries
 
+KEYS_WITH_KG_ENTRIES = ['abstraction_level',
+                        'brain_region',
+                        'license',
+                        'model_scope',
+                        'model_type',
+                        'organization',
+                        'owner',
+                        'project',
+                        'code_format']
+
+KEYS_WITH_LIST_OF_KG_ENTRIES = ['author',
+                                'cell_type',
+                                'associated_dataset',
+                                'associated_method',
+                                'associated_experimental_preparation',
+                                'pla_components',
+                                'used_software']
+
 def create_a_backup_version(models):
     """
     create a backup pkl datafile in the "local_db_backups" directory
     """
     pkl_file = open(os.path.join(str(pathlib.Path(__file__).resolve().parents[0]),
-                                 'local_db_backups',
+                                 'backups_local_db',
                                  datetime.now().strftime("%Y.%m.%d-%H:%M:%S.pkl")), 'wb')
     pickle.dump(models, pkl_file)
     pkl_file.close()
@@ -20,15 +38,28 @@ def save_models_locally(models):
     """ """
     pkl_file = open(os.path.join(pathlib.Path(__file__).resolve().parents[0],
                                  'LocalDB.pkl'), 'wb')
+
+    # forcing the elements with possible KG entries to be of the form:
+    for model in models:
+        for key in KEYS_WITH_KG_ENTRIES:
+            if type(model[key]) is not tuple:
+                model[key] = (model[key],"")
+        for key in KEYS_WITH_LIST_OF_KG_ENTRIES:
+            if type(model[key]) is not list:
+                model[key] = [model[key]]
+            for ie, elem in enumerate(model[key]):
+                if elem is not tuple:
+                    model[key][ie] = (elem,"")
     pickle.dump(models, pkl_file)
     pkl_file.close()
 
     
-def load_models():
+def load_models(filename=None):
     """ """
-    pkl_file = open(os.path.join(pathlib.Path(__file__).resolve().parents[0],
-                                 'LocalDB.pkl'), 'rb')
-
+    if filename is None:
+        filename = os.path.join(pathlib.Path(__file__).resolve().parents[0],
+                                'LocalDB.pkl')
+    pkl_file = open(filename, 'rb')
     Models = pickle.load(pkl_file)
     pkl_file.close()
                 
@@ -43,6 +74,9 @@ def get_model_attributes():
 
 
 if __name__=='__main__':
-    create_a_backup_version(load_models())
-
+    # create_a_backup_version(load_models())
+    models = load_models()
+    save_models_locally(models)
+    # print(models[4].keys())
+    # print(models[4]['author'])
                             

@@ -8,9 +8,10 @@ def load_models():
     pkl_file.close()
 
     # for model in models:
-    #     for key, val in model.items():
-    #         if len(val.split('None'))>1:
-    #             model[key] = 'None'
+    #     model['author'] = model['author'].replace(',', ';')
+    #     # for key, val in model.items():
+    #     #     if len(val.split('None'))>1:
+    #     #         model[key] = 'None'
                 
     return models
 
