@@ -6,7 +6,7 @@ It curates entries from their submission in the Model Catalog by the HBP contrib
 
 ** Schematic of the curation pipeline
 
-[[docs/process.svg]]
+[[docs/process.png]]
 
 We detail below the different steps composing the curation pipeline
 
