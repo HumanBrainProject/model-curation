@@ -8,9 +8,88 @@ It curates entries from their submission in the Model Catalog by the HBP contrib
 
 [[docs/process.svg]]
 
-*** Rationale behind the pipeline
+We detail below the different steps composing the curation pipeline
 
-Relying on a LocalDB and not only on the Google Spreadsheet as this service might disappear or become broken. Then another tool could be setup to interact and modify the LocalDb. A command line tool will be available soon (TO BE DONE).
+** Curation steps
+
+*** 1) Fetching data from the Model Catalog app
+
+Steps performed: 
+
+- We fetch the informations from the PostgreSQL database of the Model Catalog app (*TO BE CLEANED UP*).
+
+- We transform the "model-based" set of entries in the Model Catalog to a "version-based" set of entries.
+
+- We search in the Knowledge Graph for the UUID (thanks to =fairgraph=) of the provided entries of all fields in the model (when possible). We associate all entries to this =UUID= in the local database).
+
+
+#+BEGIN_SRC python
+python update_DB Catalog-to-Local
+#+END_SRC
+
+If you want to (re)-start from scratch from the information contained in the Model Catalog, use:
+
+#+BEGIN_SRC python
+python update_DB Catalog-to-DB-full-rewriting
+#+END_SRC
+
+*** 2) Writing the local DB on the spreadsheet
+
+#+BEGIN_SRC python
+python update_DB Local-to-Spreadsheet
+#+END_SRC
+
+*** 3) Visualize information
+
+See the spreadsheet. You can get this url by typing in the shell:
+
+#+BEGIN_SRC bash
+echo $curation_url
+#+END_SRC
+
+(this was loaded by the =setting_env_variables.sh= script)
+
+*** 4) Interact with model producers to fix missing fields
+
+Done through emails or [[https://support.humanbrainproject.eu/#ticket/view/my_tickets][Zammad platform]]
+
+*** 5) Update the spreadsheet
+
+Fix missing information, ...
+
+*** 6) Writing the spreadsheet updates on the Local DB
+
+#+BEGIN_SRC python
+python update_DB Spreadsheet-to-Local
+#+END_SRC
+
+- At that step again, we search in the Knowledge Graph for the UUID (thanks to =fairgraph=) of the provided entries of all fields in the model (when possible). We associate all entries to this =UUID= in the local database).
+
+*** 7) Write to KG
+
+- *Other KG consistency check needed*
+
+#+BEGIN_SRC python
+python update_DB Local-to-KG
+#+END_SRC
+
+*** 8) Release models in the KG
+
+If a model passes all criteria and the authors wants it to be published. Go the [[https://kg-editor.humanbrainproject.eu/][Knowledge Graph Editor]], search for the desired entry using the "filter" tool. Use the "release" button (shape of a cloud) to release the model.
+
+** Rationale behind the pipeline
+
+*** Transformation from a "model-based" set of entries (in the Model Catalog) to a "version-based" set of entries
+
+The Model Catalog database considers entries which are conceptual models that can have evolving implementation over time. On the other hand, the Knowledge Graph only considers specific model instances with a well-defined implementation that can be potentially released (and therefore should be [[https://www.go-fair.org/fair-principles/][FAIR]]).
+
+The chosen approach therefore duplicates a model across all its versions in the Knowledge Graph. A model with 10 versions in the Model Catalog will therefore have 10 ModelInstances in the Knowledge Graph.
+
+*** Use of a local DB and editing through the Google Spreadsheet
+
+The central database of the pipeline is the local databsae and not the Google Spreadsheet (what could be possible, one would store all data on the Spreadsheet and modify directly from there). The reason for this choice is that this service might disappear or become broken. In that case, another tool could be set up to interact and modify the LocalDb. A command line tool will be available soon (*TO BE DONE*).
+
+Also, having the local database allows simple backups over time (in charge of the curator).
 
 ** Model template
 
