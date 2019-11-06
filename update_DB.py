@@ -25,9 +25,12 @@ def from_catalog_to_local_db(new_entries_only=True):
 
             model_to_be_added = model_template.template.copy()
             # dealing with the keys in common
-            for key in model_template.template:
+            for key, val in model_template.template.items():
                 if key in model:
-                    model_to_be_added[key] = model[key]
+                    if type(val) is tuple:
+                        model_to_be_added[key] = (model[key], "")
+                    else:
+                        model_to_be_added[key] = model[key]
                 if key=='creation_date':
                     model_to_be_added[key] = model[key][:19]
 

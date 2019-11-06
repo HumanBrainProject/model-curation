@@ -1,16 +1,17 @@
 template = {
     
+    # Note that the order matters (it used for display in the Spreadsheets)
     "alias":"", # a string
     
     "version":"", # a string
     
-    "owner":"", # a string
+    "owner":("",""), # a tuple of 2 strings
     
     "name":"", # a string
 
     "description":"", # a string
     
-    "author(s)":[], # a set of a strings
+    "author(s)":[], # a set of tuples of 2 strings
 
     "identifier":"", # a string -> generated during model curation !
 
@@ -19,27 +20,26 @@ template = {
     "private":"", # a string either "TRUE" or "FALSE"
     
     # ------ KG METADATA -------- # 
-    "abstraction_level":"", # a string
-    "brain_region":"", # a string
+    "abstraction_level":("",""), # a tuple of 2 strings
+    "brain_region":("",""), # a tuple of 2 strings
     "cell_type":[], # a set of strings
     "creation_date":"", # a string
-    "license":"", # a string
-    "model_scope":"", # a string
-    "model_type":"", # a string
-    "organization":"", # a string
-    "pla_components":"", # a string
-    "project":"", # a string
-    "associated_dataset":[], # a string
-    "associated_method":[], # a string
-    "associated_experimental_preparation":[], # a set of strings
-    "used_software":[], # a set of strings
-    "code_format": "", # a string
-    "license": "", # a string
+    "model_scope":("",""), # a tuple of 2 strings
+    "model_type":("",""), # a tuple of 2 strings
+    "organization":("",""), # a tuple of 2 strings
+    "pla_components":("",""), # a tuple of 2 strings
+    "project":("",""), # a tuple of 2 strings
+    "associated_dataset":[], # a set of tuples of 2 strings
+    "associated_method":[], # a set of tuples of 2 strings
+    "associated_experimental_preparation":[], # a set of tuples of 2 strings
+    "used_software":[], # a set of tuples of 2 strings
+    "code_format": ("",""), # a tuple of 2 strings
+    "license": ("",""), # a tuple of 2 strings
     "parameters": "", # a string
     
-    # ------ VERSIONS -------- # 
-    "images":[
-	{"url":"",
-	 "caption":""}
-    ],
+    # ------ IMAGES -------- # 
+     "images":[], # list of dictionaries
+    # elements of the "images" list should be of the form:
+    # {"url":"",
+    #  "caption":""}
 }
