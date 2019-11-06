@@ -2,7 +2,7 @@ import sys, os, pprint
 import numpy as np
 
 from src import local_db, catalog_db, KG_db, spreadsheet_db, model_template
-from processing.entries import refactor_model_entries
+from processing.entries import reformat_from_catalog, reformat_date_to_timestamp
 
 def from_catalog_to_local_db(new_entries_only=True):
 
@@ -13,7 +13,7 @@ def from_catalog_to_local_db(new_entries_only=True):
         print('number of models before update from Catalog: %i' % len(previous_models))
         name_previous_models = [m['name'] for m in previous_models]
     else:
-        previous_models = []
+        previous_models = [] # no previous models to fully rewrite the DB
         name_previous_models = []
     
     new_models = previous_models
@@ -26,23 +26,26 @@ def from_catalog_to_local_db(new_entries_only=True):
             model_to_be_added = model_template.template.copy()
             # dealing with the keys in common
             for key, val in model_template.template.items():
+                if key=='author(s)':
+                    model_to_be_added['author(s)'] = reformat_from_catalog(key, val, model['author'])
                 if key in model:
-                    if type(val) is tuple:
-                        model_to_be_added[key] = (model[key], "")
-                    else:
-                        model_to_be_added[key] = model[key]
-                if key=='creation_date':
-                    model_to_be_added[key] = model[key][:19]
+                    model_to_be_added[key] = reformat_from_catalog(key, val, model[key])
 
+            if model_to_be_added['owner']==('',''):
+                try:
+                    model_to_be_added['owner'] = model_to_be_added['author(s)'][-1]
+                except IndexError:
+                    print('No author found for model: ', model['name'])
+            
             if len(model['instances'])==0: # if no version, an entry with version ""
                 model_to_be_added['version'] = ''
+                model_to_be_added['timestamp'] = reformat_date_to_timestamp(model_to_be_added['creation_date'])
                 new_models.append(model_to_be_added)
             else: # we add one model per version
                 for version in model['instances']:
                     new_models.append(model_to_be_added.copy())
-                    new_models[-1]['timestamp'] = version['timestamp'][:19]
+                    new_models[-1]['timestamp'] = reformat_date_to_timestamp(version['timestamp'])
                     # inst['timestamp'][:19].replace(':','').replace(' ','').replace('-','')
-                    
                     new_models[-1]['code_location'] = version['source']
                     new_models[-1]['version'] = version['version']
                     # we add the version-description to the description

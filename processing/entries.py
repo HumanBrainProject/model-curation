@@ -1,13 +1,20 @@
 
 
-def refactor_model_entries(models):
+def reformat_from_catalog(key, template_value, catalog_value):
 
-    for model in models:
-        for key, val in model.items():
-            if type(val)==str and len(val.split('None'))>1:
-                model[key] = 'None'
-            if key=='creation_date':
-                model[key] = val[:10].replace('-','')
-                
-    return models
+    if key=='author(s)':
+        return [(author,"") for author in catalog_value.split(',')]
+    elif (key=='creation_date') or (key=='timestamp'):
+        return catalog_value[:19] # limiting time info to the second 
+    elif type(template_value) is tuple:
+        return (catalog_value, "")
+    else:
+        return catalog_value
+
+def reformat_date_to_timestamp(tmstmp):
+    """
+    transforms the datetime string into a number (to allow easy sorting by date)
+    """
+    return str(tmstmp[:19]).replace(':','').replace(' ','').replace('-','')
+
     
