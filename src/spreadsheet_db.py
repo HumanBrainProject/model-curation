@@ -5,8 +5,53 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
+from .model_template import template
+
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+
+KEYS_FOR_MODEL_ENTRIES = [ # in the order you wish it to appear on the sheet !!
+    "alias",
+    "owner",
+    "name",
+    "description",
+    "author",
+    "identifier", 
+    "versions",
+    "code_location",
+    "private",
+    # ------ KG METADATA -------- # 
+    "abstraction_level", "brain_region", "cell_type",
+    "creation_date", "license", "model_scope", "model_type",
+    "organization", "pla_components", "project",
+    "associated_dataset", "associated_method",
+    "associated_experimental_preparation", "used_software",
+    "code_format", "license", "parameters", "images"
+]
+
+KEYS_FOR_RELEASE_SUMMARY = [ # in the order you wish it to appear on the sheet !!
+    "Model Alias",
+    "Custodian Name",
+    "Model Name",
+    "Description ?",
+    "Custodian ?",
+    "Dataset ?",
+    "Main contact ?",
+    "Author list ?",
+    "Brain structure ?",
+    "Model scope ?",
+    "Abstraction level ?",
+    "Version ?",
+    "Bundle Alias ?",
+    "Link model-bundle ?",
+    "URL code (valid) ?",
+    "Licence ?",
+    "Code Format ?",
+    "Total Score",
+    "Score for Release",
+    "Released",
+    "Submission date",
+    "Release date"]
 
 def initialize_gsheet():
 
@@ -56,7 +101,6 @@ def get_raw_key_map(Sheet='Model Entries',
         key_letter_map[key] = get_alphabet_key(i)
         
     return key_letter_map
-
 
 def read_from_spreadsheet(Range=[1,2],
                           Sheet='Model Entries',
@@ -140,6 +184,13 @@ def write_line_on_spreadsheet(values, line, starting_letter_index=0,
 
 
 if __name__ == '__main__':
+
+    print(list(template.keys()))
+    # write_line_on_spreadsheet(KEYS_FOR_MODEL_ENTRIES, 1,
+    #                           Sheet='Model Entries')
+    # write_line_on_spreadsheet(KEYS_FOR_RELEASE_SUMMARY, 1,
+    #                           Sheet='KG Release Summary')
+    
     # print(read_from_spreadsheet(Range=[3,100],
     #                             Sheet='KG',
     #                             spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET_PREVIOUS']))
@@ -147,7 +198,7 @@ if __name__ == '__main__':
     # key_letter_map = get_raw_key_map()
     # write_single_value_on_spreadsheet('ntwk-Model-blabla', 'A', 2)
     # write_row_on_spreadsheet(range(10), 'C')
-    write_line_on_spreadsheet(range(10), 3)
+    # write_line_on_spreadsheet(range(10), 3)
     # write_line_entry_on_spreadsheet(['Model', 'Author'], 2, valueInputOption='RAW')
     # write_single_value_on_spreadsheet('Model Name', 'A network model about blabla', 2, key_letter_map)
     # write_single_value_on_spreadsheet('Custodian Name', 'Y. Zerlaut', 2, key_letter_map)

@@ -5,23 +5,6 @@ import pickle
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 from processing.entries import refactor_model_entries
 
-KEYS_WITH_KG_ENTRIES = ['abstraction_level',
-                        'brain_region',
-                        'license',
-                        'model_scope',
-                        'model_type',
-                        'organization',
-                        'owner',
-                        'project',
-                        'code_format']
-
-KEYS_WITH_LIST_OF_KG_ENTRIES = ['author',
-                                'cell_type',
-                                'associated_dataset',
-                                'associated_method',
-                                'associated_experimental_preparation',
-                                'pla_components',
-                                'used_software']
 
 def create_a_backup_version(models):
     """
@@ -41,15 +24,15 @@ def save_models_locally(models):
 
     # forcing the elements with possible KG entries to be of the form:
     for model in models:
-        for key in KEYS_WITH_KG_ENTRIES:
-            if type(model[key]) is not tuple:
-                model[key] = (model[key],"")
-        for key in KEYS_WITH_LIST_OF_KG_ENTRIES:
-            if type(model[key]) is not list:
-                model[key] = [model[key]]
-            for ie, elem in enumerate(model[key]):
-                if elem is not tuple:
-                    model[key][ie] = (elem,"")
+        for key in model:
+            if type(model[key]) is list:
+                for ie, elem in enumerate(model[key]):
+                    if elem is not tuple:
+                        model[key][ie] = (elem,"")
+            else:
+                if type(model[key]) is not tuple:
+                    model[key] = (model[key],"")
+                    
     pickle.dump(models, pkl_file)
     pkl_file.close()
 

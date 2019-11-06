@@ -4,9 +4,13 @@ A python module for the model curation process in the HBP.
 
 It curates entries from their submission in the Model Catalog by the HBP contributors to their publications in the HBP Knowledge Graph. The curation process includes automatic processes of database updates together with manual editing of entries in Google Spreadsheets and email interactions with the model contributors.
 
-** Curation schematic (current pipeline)
+** Schematic of the curation pipeline
 
 [[docs/process.svg]]
+
+*** Rationale behind the pipeline
+
+Relying on a LocalDB and not only on the Google Spreadsheet as this service might disappear or become broken. Then another tool could be setup to interact and modify the LocalDb. A command line tool will be available soon (TO BE DONE).
 
 ** Model template
 

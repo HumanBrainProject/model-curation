@@ -25,7 +25,8 @@ SET_OF_EXCEPTIONS = [
 
 if __name__=='__main__':
     models = load_models()
-    for model in models:
-        print('----------------------------------------')
-        print('- %s ' % model['name'])
-        print('  * %s' % model['description'])
+    print(models[0])
+    # for model in models:
+    #     print('----------------------------------------')
+    #     print('- %s ' % model['name'])
+    #     print('  * %s' % model['description'])
