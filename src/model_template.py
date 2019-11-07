@@ -30,6 +30,9 @@ template = {
     # elements of the "images" list should be of the form:
     # {"url":"",
     #  "caption":""}
+    
     ## ---- the remaining keys are private to LocalDB ---- ##
     "released_in_KG":"False",
+    "KG_identifier":"",
+    "KG_id":"",
 }

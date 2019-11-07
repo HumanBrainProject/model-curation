@@ -158,6 +158,9 @@ def from_catalog_to_local_db(new_entries_only=True):
     print('number of models after update from Catalog: %i' % len(new_models))
     return new_models
 
+def add_KG_metadata_to_LocalDB(models):
+
+    models = KG_db.add_release_status_to_models(models) # Release Status
     
 if __name__=='__main__':
 
@@ -169,6 +172,7 @@ if __name__=='__main__':
                         type of database update to be applied, choose between:
                         - 'Catalog-to-Local' 
                         - 'Catalog-to-Local-full-rewriting' (to restart from the CatalogDB)
+                        - 'Add-KG-Metadata-to-Local'
                         - 'Local-to-Spreadsheet' 
                         - 'Spreadsheet-to-Local'
                         - 'Local-to-KG'
@@ -181,10 +185,10 @@ if __name__=='__main__':
         # N.B. the
         print('TO BE IMPLEMENTED (now relies on code living in the "hbp-validation-framework" repository)')
     if args.Protocol=='Catalog-to-Local':
+        local_db.create_a_backup_version(local_db.load_models())
         # read the Catalog DB and update the set of models
         models = from_catalog_to_local_db()
         # always make a backup copy before modifying the LocalDB
-        local_db.create_a_backup_version(local_db.load_models())
         # then save the new version
         local_db.save_models_locally(models)
     if args.Protocol=='Catalog-to-Local-full-rewriting':
@@ -193,6 +197,11 @@ if __name__=='__main__':
         # always make a backup copy before modifying the LocalDB
         # local_db.create_a_backup_version(local_db.load_models())
         # # then save the new version
+        local_db.save_models_locally(models)
+    if args.Protocol=='Add-KG-Metadata-to-Local':
+        models = local_db.load_models()
+        local_db.create_a_backup_version(models)
+        models = add_KG_metadata_to_LocalDB(models)
         local_db.save_models_locally(models)
     if args.Protocol=='Local-to-Spreadsheet':
         models = local_db.load_models()

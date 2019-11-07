@@ -39,6 +39,8 @@ If you want to (re)-start from scratch from the information contained in the Mod
 python update_DB Catalog-to-DB-full-rewriting
 #+END_SRC
 
+N.B. If the model is released in the KG and the "version name" does not match any of the version name found in the Catalog. Assuming that their is only one version (what is the case), for the "version name" in the LocalDB, we take the one of the KG not of the Catalog. This only happens for this set of models: https://kg.ebrains.eu/search/?q=granule&facet_type[0]=Contributor#Contributor/2c916596118aa1ae6070497dae75dda2
+
 *** 2) Writing the local DB on the spreadsheet
 
 #+BEGIN_SRC python
