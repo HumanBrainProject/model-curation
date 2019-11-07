@@ -162,6 +162,7 @@ def add_KG_metadata_to_LocalDB(models):
 
     models = KG_db.add_release_status_to_models(models) # Release Status
     
+    
 if __name__=='__main__':
 
     import argparse
