@@ -1,57 +1,35 @@
-import pickle, os.path, string
+import pickle, os.path, string, sys, pathlib
 import numpy as np
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-from .model_template import template
+sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
+from src.model_template import template
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-KEYS_FOR_MODEL_ENTRIES = [ # in the order you wish it to appear on the sheet !!
-    "alias",
-    "owner",
-    "name",
-    "description",
-    "author",
-    "identifier", 
-    "versions",
-    "code_location",
-    "private",
-    # ------ KG METADATA -------- # 
-    "abstraction_level", "brain_region", "cell_type",
-    "creation_date", "license", "model_scope", "model_type",
-    "organization", "pla_components", "project",
-    "associated_dataset", "associated_method",
-    "associated_experimental_preparation", "used_software",
-    "code_format", "license", "parameters", "images"
-]
 
-KEYS_FOR_RELEASE_SUMMARY = [ # in the order you wish it to appear on the sheet !!
-    "Model Alias",
-    "Custodian Name",
-    "Model Name",
-    "Description ?",
-    "Custodian ?",
-    "Dataset ?",
-    "Main contact ?",
-    "Author list ?",
-    "Brain structure ?",
-    "Model scope ?",
-    "Abstraction level ?",
-    "Version ?",
-    "Bundle Alias ?",
-    "Link model-bundle ?",
-    "URL code (valid) ?",
-    "Licence ?",
-    "Code Format ?",
-    "Total Score",
-    "Score for Release",
-    "Released",
-    "Submission date",
-    "Release date"]
+Nkey_for_spreadsheet = 26 # number of keys from template shown in spreadsheet
+KEYS_FOR_MODEL_ENTRIES = list(template.keys())[:Nkey_for_spreadsheet] #  the rest is private to LocalDB
+# KEYS_FOR_MODEL_ENTRIES = [ # in the order you wish it to appear on the sheet !!
+#     "alias", "owner", "name", "description", "author", "identifier", 
+#     "versions", "code_location", "private",
+#     "abstraction_level", "brain_region", "cell_type",
+#     "creation_date", "license", "model_scope", "model_type",
+#     "organization", "pla_components", "project",
+#     "associated_dataset", "associated_method",
+#     "associated_experimental_preparation", "used_software",
+#     "code_format", "license", "parameters", "images"
+# ]
+
+KEYS_FOR_RELEASE_SUMMARY = ['Model alias', 'owner']+\
+                           [key.replace('_', ' ')+' ?' for key in KEYS_FOR_MODEL_ENTRIES]+\
+                           ['Total Score', 'Score for Release', 'Released ?']
+Nkey_required_for_KG_release = 16 # number of keys from template used for the "Score for Release"
+
 
 def initialize_gsheet():
 
@@ -180,12 +158,39 @@ def write_line_on_spreadsheet(values, line, starting_letter_index=0,
     result = sheet.values().batchUpdate(
         spreadsheetId=spreadsheetId,
         body=batch_update_values_request_body).execute()
+
+
+def write_DB_on_spreadsheet(values, line, starting_letter_index=0,
+                            Sheet='Model Entries',
+                            valueInputOption='USER_ENTERED', # USER_ENTERED or RAW
+                            spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET']):
+    sheet = initialize_gsheet()
+
+    batch_update_values_request_body = {
+        'value_input_option': valueInputOption,
+        'data': []}
+    for i in range(len(values)):
+        batch_update_values_request_body['data'].append({
+            'range':'%s!%s%i:%s%i' % (Sheet, get_alphabet_key(starting_letter_index+i), line, get_alphabet_key(starting_letter_index+i), line),
+            'values':[[values[i]]],
+            
+        })
+    result = sheet.values().batchUpdate(
+        spreadsheetId=spreadsheetId,
+        body=batch_update_values_request_body).execute()
     
 
 
 if __name__ == '__main__':
 
-    print(list(template.keys()))
+    if sys.argv[-1]=='write-spreadsheet-key':
+        write_line_on_spreadsheet(KEYS_FOR_MODEL_ENTRIES, 1,
+                                  Sheet='Model Entries')
+        write_line_on_spreadsheet(KEYS_FOR_RELEASE_SUMMARY, 1,
+                                  Sheet='KG Release Summary')
+    else:
+        print('debugging code:')
+
     # write_line_on_spreadsheet(KEYS_FOR_MODEL_ENTRIES, 1,
     #                           Sheet='Model Entries')
     # write_line_on_spreadsheet(KEYS_FOR_RELEASE_SUMMARY, 1,

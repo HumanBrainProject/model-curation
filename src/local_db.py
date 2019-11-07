@@ -4,8 +4,6 @@ import numpy as np
 import pickle
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 
-
-
 def create_a_backup_version(models):
     """
     create a backup pkl datafile in the "local_db_backups" directory
@@ -45,12 +43,9 @@ def get_model_attributes():
 
 
 if __name__=='__main__':
-    # create_a_backup_version(load_models())
+    create_a_backup_version(load_models())
     models = load_models()
-    # save_models_locally(models)
-    for i in range(500):
-        if len(models[i]['images'])>1:
-            print(models[i]['images'])
+    save_models_locally(models)
     # print(models[4].keys())
     # print(models[4]['author'])
                             
