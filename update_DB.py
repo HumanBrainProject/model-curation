@@ -1,5 +1,4 @@
 import sys, os, pprint
-import numpy as np
 
 from src import local_db, catalog_db, KG_db, spreadsheet_db, model_template
 from processing.entries import reformat_from_catalog, reformat_for_spreadsheet, reformat_date_to_timestamp, find_meaningfull_alias, version_naming, concatenate_words
@@ -45,12 +44,14 @@ def update_release_summary(models,
 
     for im, model in enumerate(models):
         # writing the alias and owner
-        for ik, key in enumerate(['alias', 'owner']):
+        for ik, key in enumerate(['alias', 'owner', 'in_KG']):
             batch_update_values_request_body['data'].append({
                 'range':'%s!%s%i:%s%i' % ('KG Release Summary',
                                           spreadsheet_db.get_alphabet_key(ik), 2+im,
                                           spreadsheet_db.get_alphabet_key(ik), 2+im),
             'values':[[reformat_for_spreadsheet(key, model[key])]]})
+            
+        ishift0 = ik+1
         # checking if keys are present...
         total_count, release_count = 0, 0
         for ik, key in enumerate(spreadsheet_db.KEYS_FOR_MODEL_ENTRIES):
@@ -62,26 +63,26 @@ def update_release_summary(models,
                     release_count += 1./spreadsheet_db.Nkey_required_for_KG_release
             batch_update_values_request_body['data'].append({
                 'range':'%s!%s%i:%s%i' % ('KG Release Summary',
-                                          spreadsheet_db.get_alphabet_key(ik+2), 2+im,
-                                          spreadsheet_db.get_alphabet_key(ik+2), 2+im),
+                                          spreadsheet_db.get_alphabet_key(ik+ishift0), 2+im,
+                                          spreadsheet_db.get_alphabet_key(ik+ishift0), 2+im),
             'values':[[value]]})
         # Total count update
         batch_update_values_request_body['data'].append({
             'range':'%s!%s%i:%s%i' % ('KG Release Summary',
-                                      spreadsheet_db.get_alphabet_key(ik+3), 2+im,
-                                      spreadsheet_db.get_alphabet_key(ik+3), 2+im),
+                                      spreadsheet_db.get_alphabet_key(ik+ishift0+1), 2+im,
+                                      spreadsheet_db.get_alphabet_key(ik+ishift0+1), 2+im),
             'values':[[total_count]]})
         # Score for release update
         batch_update_values_request_body['data'].append({
             'range':'%s!%s%i:%s%i' % ('KG Release Summary',
-                                      spreadsheet_db.get_alphabet_key(ik+4), 2+im,
-                                      spreadsheet_db.get_alphabet_key(ik+4), 2+im),
+                                      spreadsheet_db.get_alphabet_key(ik+ishift0+2), 2+im,
+                                      spreadsheet_db.get_alphabet_key(ik+ishift0+2), 2+im),
             'values':[["%.2f" % release_count]]})
         # Release update
         batch_update_values_request_body['data'].append({
             'range':'%s!%s%i:%s%i' % ('KG Release Summary',
-                                      spreadsheet_db.get_alphabet_key(ik+5), 2+im,
-                                      spreadsheet_db.get_alphabet_key(ik+5), 2+im),
+                                      spreadsheet_db.get_alphabet_key(ik+ishift0+3), 2+im,
+                                      spreadsheet_db.get_alphabet_key(ik+ishift0+3), 2+im),
             'values':[[model['released_in_KG']]]})
             
     result = sheet.values().batchUpdate(
@@ -116,13 +117,8 @@ def from_catalog_to_local_db(new_entries_only=True):
                 elif key=='public':
                     if model['private']=='False':
                         model_to_be_added['public'] = 'True'
-                elif key=='model_type':
-                    model_to_be_added[key] = reformat_from_catalog(key, val, model[key])
-                    print(model_to_be_added[key])
                 elif key in model:
                     model_to_be_added[key] = reformat_from_catalog(key, val, model[key])
-                if key=='model_type':
-                    print(model['name'], model_to_be_added[key])
 
             if model_to_be_added['owner'][0] in ['', 'None']:
                 model_to_be_added['owner'] = model_to_be_added['author(s)'][0]
@@ -153,15 +149,17 @@ def from_catalog_to_local_db(new_entries_only=True):
                     new_models[-1]['alias'] = concatenate_words(new_models[-1]['alias'].split(' '))
                 # and add the version 
                 new_models[-1]['alias'] += ' @ '+version_naming(version['version'])
-                print(new_models[-1]['model_type'])#[0] = 'Type'
                     
     print('number of models after update from Catalog: %i' % len(new_models))
     return new_models
 
-def add_KG_metadata_to_LocalDB(models):
-
-    models = KG_db.add_release_status_to_models(models) # Release Status
-    
+def add_KG_metadata_to_LocalDB(models, SheetID):
+    print(' === FETCHING METADATA FROM KG TO ADD TO LOCAL DB === ')
+    print(' ---- Authors:')
+    KG_db.replace_authors_with_KG_entries(models[SheetID-2]) # Authors
+    print(' ---- Other fields:')
+    KG_db.replace_fields_with_KG_entries(models[SheetID-2])            
+    # pprint.pprint(models[SheetID-2])
     
 if __name__=='__main__':
 
@@ -180,6 +178,10 @@ if __name__=='__main__':
                         - 'KG-to-Local'
                         - 'Release-Summary'
                         """)
+    parser.add_argument('-sid', "--SheetID", type=int, default=-1,
+                        help="identifier of a model instance on the spreadsheet")
+    parser.add_argument('-a', "--alias", type=str,
+                        help="alias identifier of a model instance (as stated on the spreadsheet)")
     args = parser.parse_args()
 
     if args.Protocol=='Fetch-Catalog':
@@ -191,26 +193,37 @@ if __name__=='__main__':
         models = from_catalog_to_local_db()
         # always make a backup copy before modifying the LocalDB
         # then save the new version
-        local_db.save_models_locally(models)
+        local_db.save_models(models)
     if args.Protocol=='Catalog-to-Local-full-rewriting':
         # read the Catalog DB and update the set of models
         models = from_catalog_to_local_db(new_entries_only=False)
         # always make a backup copy before modifying the LocalDB
         # local_db.create_a_backup_version(local_db.load_models())
         # # then save the new version
-        local_db.save_models_locally(models)
+        local_db.save_models(models)
     if args.Protocol=='Add-KG-Metadata-to-Local':
         models = local_db.load_models()
         local_db.create_a_backup_version(models)
-        models = add_KG_metadata_to_LocalDB(models)
-        local_db.save_models_locally(models)
+        if args.SheetID<2:
+            print('Need to specify a model identifier: either a "SheetID" (i.e. >1, e.g. with "--SheetID 3") or an "alias" ("--alias xx)')
+        else:
+            add_KG_metadata_to_LocalDB(models, args.SheetID)
+        print(models[args.SheetID-2])
+        local_db.save_models(models)
     if args.Protocol=='Local-to-Spreadsheet':
         models = local_db.load_models()
         from_local_db_to_spreadsheet(models)
     if args.Protocol=='Release-Summary':
         models = local_db.load_models()
+        KG_db.add_KG_status_to_models(models) # KG & Release Status
         update_release_summary(models)
-    elif args.Protocol=='SS-to-Local':
+    if args.Protocol=='Local-to-KG':
+        models = local_db.load_models()
+        if args.SheetID<2:
+            print('Need to specify a model identifier: either a "SheetID" (i.e. >1, e.g. with "--SheetID 3") or an "alias" ("--alias xx)')
+        else:
+            KG_db.create_new_instance(models[args.SheetID-2])
+    if args.Protocol=='SS-to-Local':
         models = gsheet.read_from_spreadsheet(Range=[1,10000])
         print(len(models))
 

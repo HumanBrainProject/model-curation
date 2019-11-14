@@ -25,7 +25,7 @@ KEYS_FOR_MODEL_ENTRIES = list(template.keys())[:Nkey_for_spreadsheet] #  the res
 #     "code_format", "license", "parameters", "images"
 # ]
 
-KEYS_FOR_RELEASE_SUMMARY = ['Model alias', 'owner']+\
+KEYS_FOR_RELEASE_SUMMARY = ['Model alias', 'owner', 'in KG ?']+\
                            [key.replace('_', ' ')+' ?' for key in KEYS_FOR_MODEL_ENTRIES]+\
                            ['Total Score', 'Score for Release', 'Released ?']
 Nkey_required_for_KG_release = 16 # number of keys from template used for the "Score for Release"

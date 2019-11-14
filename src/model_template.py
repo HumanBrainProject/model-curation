@@ -13,7 +13,7 @@ template = {
     "public":"False", # a string either "True" or "False" (the inverse of private in the Model Catalog)
     "abstraction_level":("",""), # a tuple of 2 strings
     "brain_region":("",""), # a tuple of 2 strings
-    "cell_type":[], # a set of strings
+    "cell_type":("",""), # a set of strings
     "creation_date":"", # a string
     "model_scope":("",""), # a tuple of 2 strings
     "organization":("",""), # a tuple of 2 strings
@@ -32,7 +32,8 @@ template = {
     #  "caption":""}
     
     ## ---- the remaining keys are private to LocalDB ---- ##
-    "released_in_KG":"False",
+    "in_KG":"False", # does it have a KG entry ?
+    "released_in_KG":"False", # is it publicly released ?
     "KG_identifier":"",
     "KG_id":"",
 }

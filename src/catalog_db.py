@@ -3,16 +3,9 @@ import numpy as np
 import pickle, pprint
 
 def load_models():
-    pkl_file = open(os.path.join(pathlib.Path(__file__).resolve().parent,'CatalogDB.pkl'), 'rb')
+    pkl_file = open(os.path.join(pathlib.Path(__file__).resolve().parents[1], 'db', 'CatalogDB.pkl'), 'rb')
     models = pickle.load(pkl_file)
     pkl_file.close()
-
-    # for model in models:
-    #     model['author'] = model['author'].replace(',', ';')
-    #     # for key, val in model.items():
-    #     #     if len(val.split('None'))>1:
-    #     #         model[key] = 'None'
-                
     return models
 
 # here we store a list of models that were tests and wree not intended to be released

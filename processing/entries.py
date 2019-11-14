@@ -34,7 +34,17 @@ def find_meaningfull_alias(name,
 def reformat_from_catalog(key, template_value, catalog_value):
 
     if key=='author(s)':
-        return [(author,"") for author in catalog_value.split(',')]
+        # dealing with , and &
+        author_list0 = catalog_value.split(',')
+        author_list=[]
+        for author in author_list0:
+            if len(author.split('&'))>1:
+                author_list += author.split('&')
+            elif len(author.split(' and '))>1:
+                author_list += author.split(' and ')
+            else:
+                author_list.append(author)
+        return [(author,"") for author in author_list]
     elif key=='public':
         return str(not bool(catalog_value))
     elif (key=='creation_date') or (key=='timestamp'):
@@ -54,7 +64,7 @@ def reformat_for_spreadsheet(key, val):
             else:
                 output += str(elem)
             output += ', '
-        return output
+        return output[:-2]
     elif type(val) is tuple:
         return str(val[0])
     elif key=='images':
