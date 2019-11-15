@@ -1,110 +1,121 @@
-#+title: Model curation process
+# Model curation process
 
 A python module for the model curation process in the HBP. 
 
-It details the pipeline applied to /Model/ entries from their submission in the [[https://collab.humanbrainproject.eu/#/collab/19/nav/369318?state=model.n][Model Catalog]] (by the HBP contributors) to their publications in the [[https://kg.ebrains.eu/search][EBRAINS Knowledge Graph Search]]. 
+It details the pipeline applied to /Model/ entries from their submission in the [Model Catalog](https://collab.humanbrainproject.eu/#/collab/19/nav/369318?state=model.n) (by the HBP contributors) to their publications in the [EBRAINS Knowledge Graph Search](https://kg.ebrains.eu/search). 
 
-** Model curation
+## Model curation
 
-Model curation consists in making the release of models comply with the [[https://www.go-fair.org/fair-principles/][FAIR]] principles of data sharing.
+Model curation consists in making the release of models comply with the [FAIR](https://www.go-fair.org/fair-principles/) principles of data sharing (Findability, Accessibility, Interoperability, Reusability).
 
 The curation process includes automatic processes of database updates together with manual editing of entries in Google Spreadsheets and email/tickets interactions with the model contributors.
 
-** Schematic of the curation pipeline
+## Schematic of the curation pipeline
 
-[[docs/process.png]]
+![process](docs/process.png)
 
 We detail below the different steps composing the curation pipeline
 
-** Curation steps
+## Curation steps
 
-*** 1) Fetching data from the Model Catalog app
+## 1) Fetching data from the Model Catalog app
 
 Steps performed: 
 
-- We fetch the informations from the PostgreSQL database of the Model Catalog app (*TO BE CLEANED UP*).
+- We fetch the informations from the PostgreSQL database of the Model Catalog app, with:
 
 - We transform the "model-based" set of entries in the Model Catalog to a "version-based" set of entries.
 
 - We search in the Knowledge Graph for the UUID (thanks to =fairgraph=) of the provided entries of all fields in the model (when possible). We associate all entries to this =UUID= in the local database).
 
 
-#+BEGIN_SRC python
-python update_DB Catalog-to-Local
-#+END_SRC
+Those are performed in two steps:
 
-If you want to (re)-start from scratch from the information contained in the Model Catalog, use:
+```
+python update_DB.py Fetch-Catalog
+```
 
-#+BEGIN_SRC python
-python update_DB Catalog-to-DB-full-rewriting
-#+END_SRC
+The update of the Local database from the updated Catalog information is made with:
+```
+python update_DB.py Catalog-to-Local
+```
 
-N.B. If the model is released in the KG and the "version name" does not match any of the version name found in the Catalog. Assuming that their is only one version (what is the case), for the "version name" in the LocalDB, we take the one of the KG not of the Catalog. This only happens for this set of models: https://kg.ebrains.eu/search/?q=granule&facet_type[0]=Contributor#Contributor/2c916596118aa1ae6070497dae75dda2
+Note that this only happens new models to the Local database, it doesn't rewrite the full local database. If you want to (re)-start from scratch from the information contained in the Model Catalog, use:
+```
+python update_DB.py Catalog-to-DB-full-rewriting
+```
 
-*** 2) Writing the local DB on the spreadsheet
+If you want to restart from scratch while keeping your manual updates of the entries (i.e. the modifications resulting from the interactions with the users done in *Step 5*) **TO BE IMPLEMENTED**
+```
+python update_DB.py Catalog-to-DB-full-rewriting-with-stored-changes
+```
 
-#+BEGIN_SRC python
-python update_DB Local-to-Spreadsheet
-#+END_SRC
+N.B. If the model is released in the KG and the "version name" does not match any of the version name found in the Catalog. Assuming that their is only one version (what is the case), for the "version name" in the LocalDB, we take the one of the KG not of the Catalog. This only happens for this set of models: (https://kg.ebrains.eu/search/?q=granule&facet_type[0]=Contributor#Contributor/2c916596118aa1ae6070497dae75dda2)
 
-*** 3) Visualize information
+## 2) Writing the local DB on the spreadsheet
+
+```
+python update_DB.py Local-to-Spreadsheet
+```
+
+## 3) Visualize information
 
 See the spreadsheet. You can get this url by typing in the shell:
 
-#+BEGIN_SRC bash
+```
 echo $curation_url
-#+END_SRC
+```
 
 (this was loaded by the =setting_env_variables.sh= script)
 
-*** 4) Interact with model producers to fix missing fields
+## 4) Interact with model producers to fix missing fields
 
 Done through emails or [[https://support.humanbrainproject.eu/#ticket/view/my_tickets][Zammad platform]]
 
-*** 5) Update the spreadsheet
+## 5) Update the entries
 
 Fix missing information, ...
 
-*** 6) Writing the spreadsheet updates on the Local DB
+## 6) Writing the spreadsheet updates on the Local DB
 
-#+BEGIN_SRC python
+```
 python update_DB Spreadsheet-to-Local
-#+END_SRC
+```
 
 - At that step again, we search in the Knowledge Graph for the UUID (thanks to =fairgraph=) of the provided entries of all fields in the model (when possible). We associate all entries to this =UUID= in the local database).
 
-*** 7) Write to KG
+## 7) Write to KG
 
 - *Other KG consistency check needed*
 
-#+BEGIN_SRC python
+```
 python update_DB Local-to-KG
-#+END_SRC
+```
 
-*** 8) Release models in the KG
+## 8) Release models in the KG
 
 If a model passes all criteria and the authors wants it to be published. Go the [[https://kg-editor.humanbrainproject.eu/][Knowledge Graph Editor]], search for the desired entry using the "filter" tool. Use the "release" button (shape of a cloud) to release the model.
 
-** Rationale behind the pipeline
+## Rationale behind the pipeline
 
-*** Transformation from a "model-based" set of entries (in the Model Catalog) to a "version-based" set of entries
+*## Transformation from a "model-based" set of entries (in the Model Catalog) to a "version-based" set of entries
 
 The Model Catalog database considers entries which are conceptual models that can have evolving implementation over time. On the other hand, the Knowledge Graph only considers specific model instances with a well-defined implementation that can be potentially released (and therefore should be [[https://www.go-fair.org/fair-principles/][FAIR]]).
 
 The chosen approach therefore duplicates a model across all its versions in the Knowledge Graph. A model with 10 versions in the Model Catalog will therefore have 10 ModelInstances in the Knowledge Graph.
 
-*** Use of a local DB and editing through the Google Spreadsheet
+*## Use of a local DB and editing through the Google Spreadsheet
 
 The central database of the pipeline is the local databsae and not the Google Spreadsheet (what could be possible, one would store all data on the Spreadsheet and modify directly from there). The reason for this choice is that this service might disappear or become broken. In that case, another tool could be set up to interact and modify the LocalDb. A command line tool will be available soon (*TO BE DONE*).
 
 Also, having the local database allows simple backups over time (in charge of the curator).
 
-** Model template
+## Model template
 
 The metadata are stored as a tuple of strings (=name=, =UUID=), where =name= is a string identifyin the entry and =UUID= is the Knowledge graph identifier the name . Either "free" strings or strings corresponding to the UUID in the Knowledge Graph (e.g. the metadata related to the Person =Yann Zerlaut= has the UUID: =003beed8-1ee8-45ec-8737-785ca6239ef0=).
 
 An empty template is stored in the =model_template.py= file. It reads:
-#+BEGIN_SRC python
+```
 template = {
     
     # Note that the order matters (it used for display in the Spreadsheets)
@@ -150,31 +161,15 @@ template = {
     # {"url":"",
     #  "caption":""}
 }
-#+END_SRC
-
-** Installation and environment setup
-
-*** Clone the repository
-
-```
-git clone https://github.com/yzerlaut/model-curation.git
 ```
 
-*** Environment (loading necessary bash variables)
-
-run the =setting_env_variables.sh=  script in the shell 
-
-#+BEGIN_SRC bash
-cd folder_where_you_have_cloned_the_repo/model-curation/
-source setting_env_variables.sh
-#+END_SRC 
-
-** Dependencies
+## Dependencies
 
 Two python modules of the Human Brain Project ecosystem:
 
 - [[https://github.com/HumanBrainProject/fairgraph][fairgraph]]: A high-level Python API for the HBP Knowledge Graph
 - [[https://github.com/HumanBrainProject/hbp-validation-client][hbp-validation-client]]: A Python package for working with the Human Brain Project Model Validation Framework.
+- [[https://github.com/HumanBrainProject/hbp-validation-client][hbp-validation-framework]]: A Python package for working with the Human Brain Project Model Validation Framework.
 
 The Python API for working with Google Spreadsheets:
 
@@ -184,42 +179,68 @@ Follow the instructions to get the credentials at:
 
 https://developers.google.com/sheets/api/quickstart/python
 
-** Configuration file
+## Installation and environment setup
 
-A file 
-#+BEGIN_SRC python
+*## Clone the repository
+
+```
+git clone https://github.com/yzerlaut/model-curation.git
+```
+
+*## Setup your environmment
+
+
+```
 import os
 
-# location of your json files for the HBP logins, as a python path
-hbp_token_file=os.path.join(os.path.expanduser('~'), 'Downloads', 'HBP.json')
-hbp_storage_token_file=os.path.join(os.path.expanduser('~'), 'Downloads', 'config.json')
+# location of your json files for the HBP logins
+hbp_token_file=os.path.join(os.path.expanduser("~"), "Downloads", "HBP.json")
+hbp_storage_token_file=os.path.join(os.path.expanduser("~"), "Downloads", "config.json")
 
-# Google spreadsheet credential logins
-...
+# location of your hbp-validation-framework repository
+validation_framework_path = os.path.join(os.path.expanduser("~"), "work", "hbp_validation_framework")
+# credentials required to fetch informations from the PostgreSQL database of the Model Catalog
+VALIDATION_FRAMEWORK_INFOS = {    
+    "DJANGO_SECRET_KEY":"'...'",
+    "HBP_OIDC_CLIENT_ID":"...",
+    "HBP_OIDC_CLIENT_ID":"...",
+    "HBP_OIDC_CLIENT_SECRET":"...",
+    "HBP_OIDC_CLIENT_SECRET":"...",
+    "VALIDATION_SERVICE_PASSWORD":"...",
+    "VALIDATION_SERVICE_HOST":"...",
+    "VALIDATION_SERVICE_PORT":"...",
+}
 
-# ID of Google Spreadsheets 
-SGA2_SP6_SPREADSHEET_ID= '...' 
-SGA2_SP3_SPREADSHEET_ID='...'
+# ID of Google Spreadsheets
+SPREADSHEETS_ID = {
+    "MODEL_CURATION_SPREADSHEET":"...",
+    "MODEL_CURATION_SPREADSHEET_PREVIOUS":"...",
+    "SGA2_SP6_SPREADSHEET_ID" :"...",
+    "SGA2_SP3_SPREADSHEET_ID" : "...",
+}
+```
 
+*## Environment (loading necessary bash variables)
 
-#+END_SRC python
+run the =setting_env_variables.sh=  script in the shell 
 
-** Other procedures
+```
+cd folder_where_you_have_cloned_the_repo/model-curation/
+source setting_env_variables.sh
+``` 
 
-*** Update the keys of the spreadsheet after a template update 
+This should output 
+```
+cd folder_where_you_have_cloned_the_repo/model-curation/
+source setting_env_variables.sh
+``` 
 
-The template provides the basis for what is visulaized in the spreadsheet (the order of the keys matters). If you edit the template file in  =src/model_template.py= and want to visualize the additional keys in the spreadsheet, you should run:
+## Configuration file
 
-#+BEGIN_SRC bash
-python src/spreadsheet_db.py write-spreadsheet-key
-#+END_SRC
+A file 
 
-N.B. it will update both both the /KG Release Summary/ and the /Model Entries/ sheets
-
-If you wish a specific order not entirely determined by the =model_template.py= (e.g. hiding some fields), you can uncomment the following in =src/spreadsheet_db.py= and explicitely set the fields you want to visualize:
-
-#+BEGIN_SRC python
-KEYS_FOR_MODEL_ENTRIES = list(template.keys())
+```
+import os
 # KEYS_FOR_MODEL_ENTRIES = [ # in the order you wish it to appear on the sheet !!
 #     "alias", "owner", "name", "description", "author(s)", "identifier", 
 #     "versions", "code_location", "private",
@@ -229,19 +250,22 @@ KEYS_FOR_MODEL_ENTRIES = list(template.keys())
 #     "associated_dataset", "associated_method",
 #     "associated_experimental_preparation", "used_software",
 #     "code_format", "license", "parameters", "images"
-# ]
-#+END_SRC
+#
+
+```
 
 Same thing for the keys visibles in the /KG Release Summary/ sheet, it is now set by (in =src/spreadsheet_db.py=):
 
-#+BEGIN_SRC python
+```
 KEYS_FOR_RELEASE_SUMMARY = [s+' ?' for s in list(template.keys())[:2]]
 KEYS_FOR_RELEASE_SUMMARY += ['Total Score', 'Score for Release', 'Released ?']
-#+END_SRC
+```
 
 you can manually construct the list for the fields that you want to visualize. Of course, you will have to adapt the shape/visualization of the spreadsheet afterwards.
 
-** Stats
+```
+
+## Stats
 
 A detailed analysis of the curation pipeline is available at:
 

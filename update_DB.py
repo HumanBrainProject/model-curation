@@ -178,6 +178,9 @@ if __name__=='__main__':
                         - 'KG-to-Local'
                         - 'Release-Summary'
                         """)
+    parser.add_argument('-k', "--key", type=str, help="key to be updated")
+    parser.add_argument('-v', "--value", type=str, help="value of the key to be updated")
+    
     parser.add_argument('-sid', "--SheetID", type=int, default=-1,
                         help="identifier of a model instance on the spreadsheet")
     parser.add_argument('-a', "--alias", type=str,
@@ -185,8 +188,15 @@ if __name__=='__main__':
     args = parser.parse_args()
 
     if args.Protocol=='Fetch-Catalog':
-        # N.B. the
-        print('TO BE IMPLEMENTED (now relies on code living in the "hbp-validation-framework" repository)')
+        # backing up the previous database
+        os.system('mv db/Django_DB.pkl db/backups/Django_DB.pkl')
+        path = '/home/yzerlaut/work/hbp-validation-framework'
+        validation_path = os.path.join(path, 'validation_service')
+        command_path = os.path.join(path, 'model_validation_api', 'management', 'commands')
+        os.system('cp src/django_db.py '+str(os.path.join(command_path, 'get_django_db.py')))
+        os.system('cd '+str(validation_path)+'; python manage.py get_django_db')
+        os.system('mv '+os.path.join(validation_path, 'Django_DB.pkl')+' db/')
+        print('[ok] Database succesfully moved to "db/" folder (Django_DB.pkl)')
     if args.Protocol=='Catalog-to-Local':
         local_db.create_a_backup_version(local_db.load_models())
         # read the Catalog DB and update the set of models
@@ -195,11 +205,12 @@ if __name__=='__main__':
         # then save the new version
         local_db.save_models(models)
     if args.Protocol=='Catalog-to-Local-full-rewriting':
-        # read the Catalog DB and update the set of models
+        local_db.create_a_backup_version(local_db.load_models())
         models = from_catalog_to_local_db(new_entries_only=False)
-        # always make a backup copy before modifying the LocalDB
-        # local_db.create_a_backup_version(local_db.load_models())
-        # # then save the new version
+        local_db.save_models(models)
+    if args.Protocol=='Local':
+        local_db.create_a_backup_version(local_db.load_models())
+        models = from_catalog_to_local_db(new_entries_only=False)
         local_db.save_models(models)
     if args.Protocol=='Add-KG-Metadata-to-Local':
         models = local_db.load_models()

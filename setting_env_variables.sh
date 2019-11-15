@@ -3,7 +3,6 @@
 output=$(python -c '
 import json, os
 from env_variables import SPREADSHEETS_ID, hbp_token_file, hbp_storage_token_file, VALIDATION_FRAMEWORK_INFOS
-
 print("echo -----TOKENS ------------------- ")
 if os.path.isfile(hbp_token_file): # defined in env_variables
    data1=json.load(open(hbp_token_file))
@@ -26,6 +25,8 @@ magic+="export curation_url=https://docs.google.com/spreadsheets/d/%s/edit" % SP
 print("echo -----SPREADSHEET ------------------- ")
 print("echo The spreadsheet for the model curation is avialble at the URL:")
 print("echo https://docs.google.com/spreadsheets/d/%s/edit" % SPREADSHEETS_ID["MODEL_CURATION_SPREADSHEET"])
+print("echo -----VALIDATION FRAMEWORK INFOS ------------------- ")
+
 print(magic)')
 # echo "$output" # for debugging
 eval "$output"
