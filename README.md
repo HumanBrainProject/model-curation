@@ -282,14 +282,11 @@ KEYS_FOR_RELEASE_SUMMARY += ['Total Score', 'Score for Release', 'Released ?']
 
 you can manually construct the list for the fields that you want to visualize. Of course, you will have to adapt the shape/visualization of the spreadsheet afterwards.
 
-```
-
 ## Stats
 
 A detailed analysis of the curation pipeline is available at:
 
-https://github.com/yzerlaut/model-curation/blob/master/stats/summary.org
-
+![stats/summary.md](https://github.com/yzerlaut/model-curation/blob/master/stats/summary.md)
 
 
 ## ACKNOWLEDGEMENTS
