@@ -25,6 +25,10 @@ Two python modules of the Human Brain Project ecosystem:
 - [[https://github.com/HumanBrainProject/hbp-validation-client][hbp-validation-client]]: A Python package for working with the Human Brain Project Model Validation Framework.
 - [[https://github.com/HumanBrainProject/hbp-validation-client][hbp-validation-framework]]: A Python package for working with the Human Brain Project Model Validation Framework.
 
+```
+git clone https://github.com/HumanBrainProject/hbp-validation-framework.git
+```
+
 The Python API for working with Google Spreadsheets:
 
 - [[https://developers.google.com/sheets/api][Google Spreadsheet API]]
@@ -286,3 +290,12 @@ A detailed analysis of the curation pipeline is available at:
 
 https://github.com/yzerlaut/model-curation/blob/master/stats/summary.org
 
+
+
+## ACKNOWLEDGEMENTS
+
+All code is copyright 2016-2017 CNRS unless otherwise indicated.
+
+<div><img src="https://raw.githubusercontent.com/HumanBrainProject/hbp-validation-client/master/eu_logo.jpg" alt="EU Logo" width="15%" align="right"></div>
+
+This open source software code was developed in part or in whole in the Human Brain Project, funded from the European Union's Horizon 2020 Framework Programme for Research and Innovation under Specific Grant Agreements No. 720270 and No. 785907 (Human Brain Project SGA1 and SGA2).
