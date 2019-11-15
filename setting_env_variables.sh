@@ -15,18 +15,19 @@ if os.path.isfile(hbp_storage_token_file): # defined in env_variables
 else:
    print("echo ** /!\ ", hbp_storage_token_file, "not found **")
 magic = ""
+print("echo -----SPREADSHEET ------------------- ")
 for key, val in SPREADSHEETS_ID.items():
     magic+="export %s=%s\n" % (key, val);
-for key, val in VALIDATION_FRAMEWORK_INFOS.items():
-    magic+="export %s=%s\n" % (key, val);
+    print("echo [ok] %s" % key)
+# print("echo The spreadsheet for the model curation is avialble at the URL:")
+# print("echo https://docs.google.com/spreadsheets/d/%s/edit" % SPREADSHEETS_ID["MODEL_CURATION_SPREADSHEET"])
 magic+="export HBP_token="+str(data1["access_token"])+"\n";
 magic+="export HBP_STORAGE_TOKEN="+str(data2["auth"]["token"]["access_token"])+"\n" ;
 magic+="export curation_url=https://docs.google.com/spreadsheets/d/%s/edit" % SPREADSHEETS_ID["MODEL_CURATION_SPREADSHEET"]	+"" ;
-print("echo -----SPREADSHEET ------------------- ")
-print("echo The spreadsheet for the model curation is avialble at the URL:")
-print("echo https://docs.google.com/spreadsheets/d/%s/edit" % SPREADSHEETS_ID["MODEL_CURATION_SPREADSHEET"])
 print("echo -----VALIDATION FRAMEWORK INFOS ------------------- ")
-
+for key, val in VALIDATION_FRAMEWORK_INFOS.items():
+    magic+="export %s=%s\n" % (key, val);
+    magic+="echo [ok] %s \n" % key;
 print(magic)')
 # echo "$output" # for debugging
 eval "$output"
