@@ -30,6 +30,7 @@ def from_local_db_to_spreadsheet(models,
         spreadsheetId=spreadsheetId,
         body=batch_update_values_request_body).execute()
 
+    
 def update_release_summary(models,
                            valueInputOption='USER_ENTERED', # USER_ENTERED or RAW
                            spreadsheetId=os.environ['MODEL_CURATION_SPREADSHEET']):
@@ -160,6 +161,10 @@ def add_KG_metadata_to_LocalDB(models, SheetID):
     print(' ---- Other fields:')
     KG_db.replace_fields_with_KG_entries(models[SheetID-2])            
     # pprint.pprint(models[SheetID-2])
+
+def update_entry_manually(model, args):
+
+    pprint.pprint(model)
     
 if __name__=='__main__':
 
@@ -173,7 +178,7 @@ if __name__=='__main__':
                         - 'Catalog-to-Local-full-rewriting' (to restart from the CatalogDB)
                         - 'Add-KG-Metadata-to-Local'
                         - 'Local-to-Spreadsheet' 
-                        - 'Spreadsheet-to-Local'
+                        - 'Local'
                         - 'Local-to-KG'
                         - 'KG-to-Local'
                         - 'Release-Summary'
@@ -210,7 +215,7 @@ if __name__=='__main__':
         local_db.save_models(models)
     if args.Protocol=='Local':
         local_db.create_a_backup_version(local_db.load_models())
-        models = from_catalog_to_local_db(new_entries_only=False)
+        update_entry(models, args)
         local_db.save_models(models)
     if args.Protocol=='Add-KG-Metadata-to-Local':
         models = local_db.load_models()
