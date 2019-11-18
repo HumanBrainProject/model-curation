@@ -164,18 +164,27 @@ def add_KG_metadata_to_LocalDB(models, SheetID):
 
 def update_entry_manually(model, args):
 
-    if (args.key in model) and (args.value!=''):
-        if input('Do you want to replace the value "%s" for key "%s" by: "%s" ? y/[n]\n' % (model[args.key][0], args.key, args.value)) in ['y', 'yes']:
-            if type(model[args.key]) is tuple:
-                model[args.key] = (args.value, '')
-            elif type(model[args.key]) is list:
-                print(list(args.value))
-        else:
-            print('value not changed')
+    if (args.key in model) and args.value is not None:
+        if type(model[args.key]) is tuple:
+            if input('Do you want to replace the value "%s" for key "%s" by: "%s" ? y/[n]\n' % (model[args.key][0], args.key, args.value[0])) in ['y', 'yes']:
+                model[args.key] = (args.value[0], '')
+                print('[ok] value changed to', model[args.key])
+            else:
+                print('[!!] value not changed')
+        elif type(model[args.key]) is list:
+            if input('Do you want to replace the value "%s" for key "%s" by: "%s" ? y/[n]\n' % (model[args.key], args.key, args.value)) in ['y', 'yes']:
+                model[args.key] = []
+                print(args.value)
+                for elem in args.value:
+                    model[args.key].append((elem, ''))
+                print('[ok] value changed to', model[args.key])
+            else:
+                print('[!!] value not changed')
     elif (args.key in model):
         print('The value for key %s is currently: %s' % (args.key, model[args.key]))
     else:
         pprint.pprint(model)
+        print('[!!] key not found')
     
 if __name__=='__main__':
 
@@ -195,7 +204,8 @@ if __name__=='__main__':
                         - 'Release-Summary'
                         """)
     parser.add_argument('-k', "--key", type=str, help="key to be updated")
-    parser.add_argument('-v', "--value", type=str, help="value of the key to be updated")
+    parser.add_argument('-v', "--value", type=str, nargs='*',
+                        help="value of the key to be updated")
     
     parser.add_argument('-sid', "--SheetID", type=int, default=-1,
                         help="identifier of a model instance on the spreadsheet")

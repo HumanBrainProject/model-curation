@@ -161,17 +161,34 @@ echo $curation_url
 
 ### 4) Interact with model producers to fix missing fields
 
-Done through emails or [[https://support.humanbrainproject.eu/#ticket/view/my_tickets][Zammad platform]]
+Done through emails or tickets on the [Zammad platform](https://support.humanbrainproject.eu/#ticket/view/my_tickets)
+
 
 ### 5) Update the entries
 
+We then fix the entries manually in the Local database using a command-line tool. The tool works on a entry-by-entry basis for a `python update_DB --SheetID <ID> --key <KEY> --value <VALUE>`, not that `<VALUE>` can be either a name or an UUID.
+
+Let's illustrate the process with an example:
+
 ![updates](docs/update-demo.png)
 
+In that example, the model entry of alias `Rall-Morpho-L5PyrMouseV1 @ 78492b6` (that has a `SheetID==14`), the `license` and `associated_datasets` fields needs to be updated.
 
 ```
-python update_DB.py Local --SheetID 14 --key license --value 
+python update_DB.py Local --SheetID 14 --key license --value 'CC BY-NC-SA 4.0'
 ```
-Fix missing information, ...
+
+For keys that accept multiple values (e.g. `associated_dataset`), you can pass a list of strings (the names/uuids of the KG objects) as a value, cf:
+```
+python update_DB.py Local --SheetID 14 --key associated_dataset --values 'Input Impedance Recordings in Neocortical Pyramidal cells' 'Automated segmentation of cortical layers of the BigBrain'
+```
+
+Then we update the Local database with the KG information and we update the Spreadsheet:
+```
+python update_DB.py Add-KG-Metadata-to-Local --SheetID 14
+python update_DB.py Local-to-Spreadsheet
+python update_DB.py Release-Summary
+```
 
 ### 6) Writing the spreadsheet updates on the Local DB
 
