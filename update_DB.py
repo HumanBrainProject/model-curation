@@ -1,4 +1,4 @@
-import sys, os, pprint
+import sys, os, pprint, warnings
 
 from src import local_db, catalog_db, KG_db, spreadsheet_db, model_template
 from processing.entries import reformat_from_catalog, reformat_for_spreadsheet, reformat_date_to_timestamp, find_meaningfull_alias, version_naming, concatenate_words
@@ -138,7 +138,7 @@ def from_catalog_to_local_db(new_entries_only=True):
                 new_models[-1]['code_location'] = version['source']
                 new_models[-1]['version'] = version['version']
                 # we add the version-description to the description
-                new_models[-1]['description'] += '\n'+version['version']
+                new_models[-1]['description'] += '\nversion: '+version['version']
                 # parameters
                 new_models[-1]['parameters'] = version['parameters']
                 new_models[-1]['identifier'] = version['id']
@@ -164,7 +164,18 @@ def add_KG_metadata_to_LocalDB(models, SheetID):
 
 def update_entry_manually(model, args):
 
-    pprint.pprint(model)
+    if (args.key in model) and (args.value!=''):
+        if input('Do you want to replace the value "%s" for key "%s" by: "%s" ? y/[n]\n' % (model[args.key][0], args.key, args.value)) in ['y', 'yes']:
+            if type(model[args.key]) is tuple:
+                model[args.key] = (args.value, '')
+            elif type(model[args.key]) is list:
+                print(list(args.value))
+        else:
+            print('value not changed')
+    elif (args.key in model):
+        print('The value for key %s is currently: %s' % (args.key, model[args.key]))
+    else:
+        pprint.pprint(model)
     
 if __name__=='__main__':
 
@@ -215,7 +226,9 @@ if __name__=='__main__':
         local_db.save_models(models)
     if args.Protocol=='Local':
         local_db.create_a_backup_version(local_db.load_models())
-        update_entry(models, args)
+        models = local_db.load_models()
+        update_entry_manually(models[args.SheetID-2], args)
+        print(models[args.SheetID-2][args.key])
         local_db.save_models(models)
     if args.Protocol=='Add-KG-Metadata-to-Local':
         models = local_db.load_models()
@@ -224,7 +237,7 @@ if __name__=='__main__':
             print('Need to specify a model identifier: either a "SheetID" (i.e. >1, e.g. with "--SheetID 3") or an "alias" ("--alias xx)')
         else:
             add_KG_metadata_to_LocalDB(models, args.SheetID)
-        print(models[args.SheetID-2])
+        # pprint.pprint(models[args.SheetID-2])
         local_db.save_models(models)
     if args.Protocol=='Local-to-Spreadsheet':
         models = local_db.load_models()

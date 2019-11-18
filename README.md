@@ -165,6 +165,12 @@ Done through emails or [[https://support.humanbrainproject.eu/#ticket/view/my_ti
 
 ### 5) Update the entries
 
+![updates](docs/update-demo.png)
+
+
+```
+python update_DB.py Local --SheetID 14 --key license --value 
+```
 Fix missing information, ...
 
 ### 6) Writing the spreadsheet updates on the Local DB
