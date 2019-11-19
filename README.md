@@ -1,6 +1,6 @@
 # Model curation 
 
-__A python module for the model curation process in the HBP. __
+**A python module for the model curation process in the HBP.**
 
 It details the pipeline applied to *Model* entries from their submission in the [Model Catalog](https://collab.humanbrainproject.eu/#/collab/19/nav/369318?state=model.n) (by the HBP contributors) to their publications in the [EBRAINS Knowledge Graph Search](https://kg.ebrains.eu/search). 
 
