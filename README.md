@@ -6,36 +6,40 @@ It details the pipeline applied to /Model/ entries from their submission in the 
 
 ## Model curation in context
 
-Model curation consists in making the release of models comply with the [FAIR](https://www.go-fair.org/fair-principles/) principles of data sharing (Findability, Accessibility, Interoperability, Reusability).
-
-The curation process includes automatic processes of database updates together with manual editing of entries in Google Spreadsheets and email/tickets interactions with the model contributors.
+Curation is the process of organising and integrating data into a collection by gathering and structuring metadata. This requires to insure the use of a "common language" for referencing metadata and to ensure a high quality of metadata. In the present context of neuroscientific models, we want to reference models by using a metadata management tool for neursocientific research: the [EBRAINS Knowledge Graph](https://kg.ebrains.eu/search). The model curation process should also insure that the release of models comply with the [FAIR](https://www.go-fair.org/fair-principles/) principles of data sharing (Findability, Accessibility, Interoperability, Reusability).
 
 ## Schematic of the curation pipeline
 
-![process](docs/process.png)
+The curation process includes automatic processes of database updates together with manual editing of entries and email/tickets interactions with the model contributors. 
 
-We detail below the different steps composing the curation pipeline
+The curation pipeline is depicted in the following schematic:
+
+![process](docs/process.png)
 
 ## Installation and environment setup
 ### Installing dependencies
 
-Two python modules of the Human Brain Project ecosystem:
-
-- [[https://github.com/HumanBrainProject/fairgraph][fairgraph]]: A high-level Python API for the HBP Knowledge Graph
-- [[https://github.com/HumanBrainProject/hbp-validation-client][hbp-validation-client]]: A Python package for working with the Human Brain Project Model Validation Framework.
-- [[https://github.com/HumanBrainProject/hbp-validation-client][hbp-validation-framework]]: A Python package for working with the Human Brain Project Model Validation Framework.
+You can install the dependencies of this module by running:
 
 ```
-git clone https://github.com/HumanBrainProject/hbp-validation-framework.git
+pip install -r requirements.py
 ```
 
-The Python API for working with Google Spreadsheets:
+The dependencies include:
 
-- [[https://developers.google.com/sheets/api][Google Spreadsheet API]]
+1. Some python modules of the Human Brain Project ecosystem:
 
-Follow the instructions to get the credentials at:
+	- [fairgraph](https://github.com/HumanBrainProject/fairgraph): A high-level Python API for the HBP Knowledge Graph
+	- [hbp-validation-client](https://github.com/HumanBrainProject/hbp-validation-client)
+	- [hbp-validation-framework](https://github.com/HumanBrainProject/hbp-validation-client): A Python package for working with the Human Brain Project Model Validation Framework.
 
-https://developers.google.com/sheets/api/quickstart/python
+2. The Python API to work with Google Spreadsheets:
+
+   - [[https://developers.google.com/sheets/api][Google Spreadsheet API]]
+
+	Follow the instructions to get the credentials at:
+
+	https://developers.google.com/sheets/api/quickstart/python
 
 ### Installing the `model-curation` module
 
@@ -47,12 +51,12 @@ git clone https://github.com/yzerlaut/model-curation.git
 
 ### Setting up your environmment
 
-Fill the following file with appropriate informations related to you installation
+Fill the following file (`env_variables.py`) with the credentials of the validation framework and the informations related to you installation (ask for the ):
 ```
 import os
 
 # location of your json files for the HBP logins
-hbp_token_file=os.path.join(os.path.expanduser("~"), "Downloads", "HBP.json")
+hbp_token_file=os.path.join(os.path.expanduser("~"), "Downloads", "HBP.json") 
 hbp_storage_token_file=os.path.join(os.path.expanduser("~"), "Downloads", "config.json")
 
 # location of your hbp-validation-framework repository
@@ -78,12 +82,13 @@ SPREADSHEETS_ID = {
 }
 ```
 
+Note that this assumes that you save the token obtained at https://nexus-iam.humanbrainproject.org/v0/oauth2/authorize in your Download folder as `HBP.json` (default settings). Similarly, the storage token obtained at https://validation-staging.brainsimulation.eu/config.json should be saved as `config.py` in the Download folder.
+
 ## Environment (loading necessary bash variables)
 
 run the =setting_env_variables.sh=  script in the shell 
 
 ```
-cd folder_where_you_have_cloned_the_repo/model-curation/
 source setting_env_variables.sh
 ``` 
 
@@ -106,8 +111,11 @@ This should output something like:
 [ok] VALIDATION_SERVICE_PORT
 ``` 
 
+You should should be set up !
 
 ## Curation steps
+
+We detail below the different steps composing the curation pipeline (see above schematic for their numbering).
 
 ### 1) Fetching data from the Model Catalog app
 
@@ -115,22 +123,22 @@ Steps performed:
 
 - We fetch the informations from the PostgreSQL database of the Model Catalog app, with:
 
-- We transform the "model-based" set of entries in the Model Catalog to a "version-based" set of entries.
-
-- We search in the Knowledge Graph for the UUID (thanks to =fairgraph=) of the provided entries of all fields in the model (when possible). We associate all entries to this =UUID= in the local database).
-
-
-Those are performed in two steps:
-
 ```
 python update_DB.py Fetch-Catalog
 ```
 
-The update of the Local database from the updated Catalog information is made with:
+- We transform the "model-based" set of entries in the Model Catalog to a "version-based" set of entries, with:
+
 ```
 python update_DB.py Catalog-to-Local
 ```
 
+- We search in the Knowledge Graph for the UUID (thanks to =fairgraph=) of the provided entries of all fields in the model (when possible). We associate all entries to this `UUID` in the local database).
+
+```
+python update_DB.py Add-KG-Metadata-to-Local
+```
+----------------------------------------------------------------
 Note that this only happens new models to the Local database, it doesn't rewrite the full local database. If you want to (re)-start from scratch from the information contained in the Model Catalog, use:
 ```
 python update_DB.py Catalog-to-DB-full-rewriting
@@ -145,19 +153,19 @@ N.B. If the model is released in the KG and the "version name" does not match an
 
 ### 2) Writing the local DB on the spreadsheet
 
+We use the Google API to write the Local database to the model spreadsheet
 ```
 python update_DB.py Local-to-Spreadsheet
 ```
+This will update both the *Model Entries* and the *KG Release Summary* sheets of the spreadsheet.
 
-### 3) Visualize information
+### 3) Visualize metadata and find missing information
 
-See the spreadsheet. You can get this url by typing in the shell:
+This is done by visualiznig the two sheets of the Google Spreadsheet (you can get the url of the spreadsheet by typing in the shell `echo $curation_url`, this was loaded by the `setting_env_variables.sh` script).
 
-```
-echo $curation_url
-```
+For example 
 
-(this was loaded by the =setting_env_variables.sh= script)
+
 
 ### 4) Interact with model producers to fix missing fields
 
@@ -166,7 +174,7 @@ Done through emails or tickets on the [Zammad platform](https://support.humanbra
 
 ### 5) Update the entries
 
-We then fix the entries manually in the Local database using a command-line tool. The tool works on a entry-by-entry basis for a `python update_DB --SheetID <ID> --key <KEY> --value <VALUE>`, not that `<VALUE>` can be either a name or an UUID.
+We then fix the entries manually in the Local database using a command-line tool. The tool works on a entry-by-entry basis for a `python update_DB --SheetID <ID> --key <KEY> --value <VALUE>`, not that `<VALUE>` can be either a name or an UUID in the Knowledge Graph.
 
 Let's illustrate the process with an example:
 

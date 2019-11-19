@@ -209,6 +209,8 @@ if __name__=='__main__':
     
     parser.add_argument('-sid', "--SheetID", type=int, default=-1,
                         help="identifier of a model instance on the spreadsheet")
+    parser.add_argument('-sidr', "--SheetID_range", type=str,
+                        help="identifier of a model instance on the spreadsheet")
     parser.add_argument('-a', "--alias", type=str,
                         help="alias identifier of a model instance (as stated on the spreadsheet)")
     args = parser.parse_args()
@@ -243,7 +245,13 @@ if __name__=='__main__':
     if args.Protocol=='Add-KG-Metadata-to-Local':
         models = local_db.load_models()
         local_db.create_a_backup_version(models)
-        if args.SheetID<2:
+        if args.SheetID_range is not '':
+            try:
+                for i in range(int(args.SheetID_range.split('-')[0]),int(args.SheetID_range.split('-')[1])+1):
+                    add_KG_metadata_to_LocalDB(models, i)
+            except IndexError:
+                print('"%s" is not a valid range of SheetIDs' % args.SheetID)
+        elif args.SheetID<2:
             print('Need to specify a model identifier: either a "SheetID" (i.e. >1, e.g. with "--SheetID 3") or an "alias" ("--alias xx)')
         else:
             add_KG_metadata_to_LocalDB(models, args.SheetID)
@@ -252,6 +260,8 @@ if __name__=='__main__':
     if args.Protocol=='Local-to-Spreadsheet':
         models = local_db.load_models()
         from_local_db_to_spreadsheet(models)
+        KG_db.add_KG_status_to_models(models) # KG & Release Status
+        update_release_summary(models)
     if args.Protocol=='Release-Summary':
         models = local_db.load_models()
         KG_db.add_KG_status_to_models(models) # KG & Release Status
