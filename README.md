@@ -133,11 +133,16 @@ python update_DB.py Fetch-Catalog
 python update_DB.py Catalog-to-Local
 ```
 
-- We search in the Knowledge Graph for the UUID (thanks to =fairgraph=) of the provided entries of all fields in the model (when possible). We associate all entries to this `UUID` in the local database).
+- We search in the Knowledge Graph for the UUID (thanks to =fairgraph=) of the provided entries of all fields in the model (when possible). We associate all entries to this `UUID` in the local database). This is done on a single model basis with:
 
 ```
-python update_DB.py Add-KG-Metadata-to-Local
+python update_DB.py Add-KG-Metadata-to-Local --SheetID 14
 ```
+You can loop over entries by using the `--SheetID_range` argument:
+```
+python update_DB.py Add-KG-Metadata-to-Local --SheetID_range 2-300
+```
+
 ----------------------------------------------------------------
 Note that this only happens new models to the Local database, it doesn't rewrite the full local database. If you want to (re)-start from scratch from the information contained in the Model Catalog, use:
 ```
@@ -163,77 +168,80 @@ This will update both the *Model Entries* and the *KG Release Summary* sheets of
 
 This is done by visualizing the two sheets of the Google Spreadsheet (you can get the url of the spreadsheet by typing in the shell `echo $curation_url`, this was loaded by the `setting_env_variables.sh` script).
 
-Let's take the example of an entry that needs to be curated. On the spreadsheet shown below, the entry `SheetID==14` lacks a `license` term (in the required fields for KG release, highlighted in green at the top).
+Let's take the example of an entry that needs to be curated. On the spreadsheet shown below, the entry of alias `Rall-Morpho-L5PyrMouseV1 @ 78492b6` (that has a `SheetID==14`) lacks a `license` term (in the required fields for KG release, highlighted in green at the top), we will therefore needs the model producer (here `Yann Zerlaut`) to provide one.
 
 ![missing1](docs/example_missing.png)
 
-![missing2](docs/example_ME_missing.png)
-
-![fixed1](docs/example_ME_fixed.png)
-
-![fixed1](docs/example_fixed.png)
-
-
-
-For example 
-
-
+We also note that there is a few non-mandatory fields that are missing (`associated_dataset`, `used_software`, ...), so we will ask the model producer to confirm that such metadata are irrelevant to the study.
 
 ### 4) Interact with model producers to fix missing fields
 
 
+We interact with the model producer through emails or tickets on the [Zammad platform](https://support.humanbrainproject.eu/#ticket/view/my_tickets) (if he created one at submission time). The information collected was the following:
 
+- the license term that should apply to this entry is 
+- there is indeed a dataset relevant to that study, a set of intracellular recording was used to constraint this numerical model. Those data were submitted as a `Dataset` to the Knowledge graph (if it didn't, it should). The name and identifier of that Knowledge Graph `Dataset` entry are: `name="Input Impedance Recordings in Neocortical Pyramidal cells"` and `UUID="5a95ceb4-e303-42e3-9558-83b9ccb45976"`
 
-
-
-Done through emails or tickets on the [Zammad platform](https://support.humanbrainproject.eu/#ticket/view/my_tickets)
-
+We therefore want to update the two following missing fields:
+![missing2](docs/example_ME_missing.png)
 
 ### 5) Update the entries
 
-We then fix the entries manually in the Local database using a command-line tool. The tool works on a entry-by-entry basis for a `python update_DB --SheetID <ID> --key <KEY> --value <VALUE>`, not that `<VALUE>` can be either a name or an UUID in the Knowledge Graph.
+We fix the entries manually in the Local database using a command-line tool. The tool works on a entry-by-entry basis for a `python update_DB --SheetID <ID> --key <KEY> --value <VALUE>`, not that `<VALUE>` can be either a name or an UUID in the Knowledge Graph.
 
-Let's illustrate the process with an example:
-
-![updates](docs/update-demo.png)
-
-In that example, the model entry of alias `Rall-Morpho-L5PyrMouseV1 @ 78492b6` (that has a `SheetID==14`), the `license` and `associated_datasets` fields needs to be updated.
-
+For the example above, we run:
 ```
-python update_DB.py Local --SheetID 14 --key license --value 'CC BY-NC-SA 4.0'
+python update_DB --SheetID 14 --key license --value "CC BY-NC-SA 4.0"
+python update_DB --SheetID 14 --key associated_dataset --value "Input Impedance Recordings in Neocortical Pyramidal cells"
 ```
+N.B. For the fields that support multiple entries, you can add multiple values in series, e.g. `--value "Name 1" "Name 2" "Name 3"`
 
-For keys that accept multiple values (e.g. `associated_dataset`), you can pass a list of strings (the names/uuids of the KG objects) as a value, cf:
-```
-python update_DB.py Local --SheetID 14 --key associated_dataset --values 'Input Impedance Recordings in Neocortical Pyramidal cells' 'Automated segmentation of cortical layers of the BigBrain'
-```
-
-Then we update the Local database with the KG information and we update the Spreadsheet:
+We check the Knowledge Graph metadata for those entries with `Add-KG-Metadata-to-Local` (see *Step 2*) and we update the spreadsheet:
 ```
 python update_DB.py Add-KG-Metadata-to-Local --SheetID 14
 python update_DB.py Local-to-Spreadsheet
-python update_DB.py Release-Summary
 ```
 
-### 6) Writing the spreadsheet updates on the Local DB
+Note that if some metadata entries are not already present in the Knowledge Graph (e.g. `model_scope`, `cell_type`, ...), it should be manually created using the [Knowledge Graph Editor](https://kg-editor.humanbrainproject.eu/). Once all metadata information do exist in the Knowledge Graph, re-run the above command `Addd-KG-Metadata-to-Local` to insure the cross-linking to Knowledge Graph entries.
+
+You can now visualize the result in the *Model Entries* sheet:
+![fixed1](docs/example_ME_fixed.png)
+
+And in the *Release Summary* sheet:
+![fixed2](docs/example_fixed.png)
+
+### 6) Write to Knowledge Graph
+
+Now that we have insured that all metadata were accurate and had a correspondance in the Knowledge Graph, we can create the new `ModelInstance` entry in the Knowledge graph with:
 
 ```
-python update_DB Spreadsheet-to-Local
+python update_DB Local-to-KG -sid 14 # "-sid" is the shortcut for "--SheetID"
 ```
 
-- At that step again, we search in the Knowledge Graph for the UUID (thanks to =fairgraph=) of the provided entries of all fields in the model (when possible). We associate all entries to this =UUID= in the local database).
-
-### 7) Write to KG
-
-- *Other KG consistency check needed*
+This command invites you to review the model entry. If everything is fine, you can validate the submission.
 
 ```
-python update_DB Local-to-KG
+{ 
+	------------------------------------------------
+	{{ DICTIONARY CORRESPONDING TO THE MODEL ENTRY}}
+	-----------------------------------------------
+}
+===========================================================
+  the entry *can* be pushed to the Knowledge Graph
+    please review the above information carefully
+===========================================================
+are you sure that the above informations are correct ? y/[n]
+
 ```
 
-### 8) Release models in the KG
+### 7) Release models in the KG
 
-If a model passes all criteria and the authors wants it to be published. Go the [[https://kg-editor.humanbrainproject.eu/][Knowledge Graph Editor]], search for the desired entry using the "filter" tool. Use the "release" button (shape of a cloud) to release the model.
+If a model passes all criteria and the authors wants it to be published. Go the [Knowledge Graph Editor](https://kg-editor.humanbrainproject.eu/), search for the desired entry using the "filter" tool. Use the "release" button (shape of a cloud) to release the model.
+
+After the release in the [Editor](https://kg-editor.humanbrainproject.eu/), you can update the release status in the *Release Summary* sheet with:
+```
+python update_DB Release-Summary
+```
 
 ## Rationale behind the pipeline
 
