@@ -161,13 +161,30 @@ This will update both the *Model Entries* and the *KG Release Summary* sheets of
 
 ### 3) Visualize metadata and find missing information
 
-This is done by visualiznig the two sheets of the Google Spreadsheet (you can get the url of the spreadsheet by typing in the shell `echo $curation_url`, this was loaded by the `setting_env_variables.sh` script).
+This is done by visualizing the two sheets of the Google Spreadsheet (you can get the url of the spreadsheet by typing in the shell `echo $curation_url`, this was loaded by the `setting_env_variables.sh` script).
+
+Let's take the example of an entry that needs to be curated. On the spreadsheet shown below, the entry `SheetID==14` lacks a `license` term (in the required fields for KG release, highlighted in green at the top).
+
+![missing1](docs/example_missing.png)
+
+![missing2](docs/example_ME_missing.png)
+
+![fixed1](docs/example_ME_fixed.png)
+
+![fixed1](docs/example_fixed.png)
+
+
 
 For example 
 
 
 
 ### 4) Interact with model producers to fix missing fields
+
+
+
+
+
 
 Done through emails or tickets on the [Zammad platform](https://support.humanbrainproject.eu/#ticket/view/my_tickets)
 
