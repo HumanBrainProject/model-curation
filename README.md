@@ -78,7 +78,7 @@ SPREADSHEETS_ID = {
 }
 ```
 
-*## Environment (loading necessary bash variables)
+## Environment (loading necessary bash variables)
 
 run the =setting_env_variables.sh=  script in the shell 
 
@@ -212,21 +212,15 @@ If a model passes all criteria and the authors wants it to be published. Go the 
 
 ## Rationale behind the pipeline
 
-*## Transformation from a "model-based" set of entries (in the Model Catalog) to a "version-based" set of entries
+### Transformation from a "model-based" set of entries (in the Model Catalog) to a "version-based" set of entries
 
-The Model Catalog database considers entries which are conceptual models that can have evolving implementation over time. On the other hand, the Knowledge Graph only considers specific model instances with a well-defined implementation that can be potentially released (and therefore should be [[https://www.go-fair.org/fair-principles/][FAIR]]).
+The Model Catalog database considers entries which are conceptual models that can have evolving implementation over time. On the other hand, the Knowledge Graph only considers specific model instances with a well-defined implementation that can be potentially released (and therefore should be ![FAIR](https://www.go-fair.org/fair-principles/)).
 
 The chosen approach therefore duplicates a model across all its versions in the Knowledge Graph. A model with 10 versions in the Model Catalog will therefore have 10 ModelInstances in the Knowledge Graph.
 
-*## Use of a local DB and editing through the Google Spreadsheet
-
-The central database of the pipeline is the local databsae and not the Google Spreadsheet (what could be possible, one would store all data on the Spreadsheet and modify directly from there). The reason for this choice is that this service might disappear or become broken. In that case, another tool could be set up to interact and modify the LocalDb. A command line tool will be available soon (*TO BE DONE*).
-
-Also, having the local database allows simple backups over time (in charge of the curator).
-
 ## Model template
 
-The metadata are stored as a tuple of strings (=name=, =UUID=), where =name= is a string identifyin the entry and =UUID= is the Knowledge graph identifier the name . Either "free" strings or strings corresponding to the UUID in the Knowledge Graph (e.g. the metadata related to the Person =Yann Zerlaut= has the UUID: =003beed8-1ee8-45ec-8737-785ca6239ef0=).
+The metadata are stored as a tuple of strings (`name`, `UUID`), where =name= is a string identifyin the entry and `UUID` is the Knowledge graph identifier the name . Either "free" strings or strings corresponding to the UUID in the Knowledge Graph (e.g. the metadata related to the Person `Yann Zerlaut` has the UUID: `003beed8-1ee8-45ec-8737-785ca6239ef0`).
 
 An empty template is stored in the =model_template.py= file. It reads:
 ```
