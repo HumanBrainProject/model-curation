@@ -35,11 +35,7 @@ The dependencies include:
 
 2. The Python API to work with Google Spreadsheets:
 
-   - [[https://developers.google.com/sheets/api][Google Spreadsheet API]]
-
-	Follow the instructions to get the credentials at:
-
-	https://developers.google.com/sheets/api/quickstart/python
+   - [Google Spreadsheet API](https://developers.google.com/sheets/api). Follow the instructions to get the credentials at: https://developers.google.com/sheets/api/quickstart/python
 
 ### Installing the `model-curation` module
 
