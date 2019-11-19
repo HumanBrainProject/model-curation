@@ -266,6 +266,7 @@ if __name__=='__main__':
         models = local_db.load_models()
         KG_db.add_KG_status_to_models(models) # KG & Release Status
         update_release_summary(models)
+        local_db.save_models(models)
     if args.Protocol=='Local-to-KG':
         models = local_db.load_models()
         if args.SheetID<2:
