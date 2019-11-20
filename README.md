@@ -341,7 +341,7 @@ A detailed analysis of the model curation is available at:
 
 ## ACKNOWLEDGEMENTS
 
-All code is copyright 2016-2017 CNRS unless otherwise indicated.
+All code is copyright 2019-2020 CNRS unless otherwise indicated.
 
 <div><img src="https://raw.githubusercontent.com/HumanBrainProject/hbp-validation-client/master/eu_logo.jpg" alt="EU Logo" width="15%" align="right"></div>
 
