@@ -330,7 +330,11 @@ you can manually construct the list for the fields that you want to visualize. O
 
 ## Stats
 
-A detailed analysis of the curation pipeline is available at:
+Current status of Model Curation (Nov. 20th):
+
+![stats](stats/Model-Curation.png)
+
+A detailed analysis of the model curation is available at:
 
 ![stats/summary.md](https://github.com/yzerlaut/model-curation/blob/master/stats/summary.md)
 
