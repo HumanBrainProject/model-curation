@@ -4,5 +4,5 @@ Here we analyze the metadata of the collection of models in both the [Model Cata
 
 Current status (Nov. 20th):
 
-!(stats)[Model-Curation.png]
+![stats](Model-Curation.png)
 
