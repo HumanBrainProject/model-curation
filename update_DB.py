@@ -215,6 +215,9 @@ if __name__=='__main__':
                         help="alias identifier of a model instance (as stated on the spreadsheet)")
     args = parser.parse_args()
 
+    models = local_db.load_models()
+    local_db.create_a_backup_version(models) # always create a backup version first
+    
     if args.Protocol=='Fetch-Catalog':
         # backing up the previous database
         os.system('mv db/Django_DB.pkl db/backups/Django_DB.pkl')
@@ -226,26 +229,33 @@ if __name__=='__main__':
         os.system('mv '+os.path.join(validation_path, 'Django_DB.pkl')+' db/')
         print('[ok] Database succesfully moved to "db/" folder (Django_DB.pkl)')
     if args.Protocol=='Catalog-to-Local':
-        local_db.create_a_backup_version(local_db.load_models())
         # read the Catalog DB and update the set of models
         models = from_catalog_to_local_db()
-        # always make a backup copy before modifying the LocalDB
         # then save the new version
         local_db.save_models(models)
     if args.Protocol=='Catalog-to-Local-full-rewriting':
-        local_db.create_a_backup_version(local_db.load_models())
         models = from_catalog_to_local_db(new_entries_only=False)
         local_db.save_models(models)
     if args.Protocol=='Local':
         local_db.create_a_backup_version(local_db.load_models())
         models = local_db.load_models()
-        update_entry_manually(models[args.SheetID-2], args)
-        print(models[args.SheetID-2][args.key])
+        if args.SheetID_range not in ['', None]:
+            try:
+                for i in range(int(args.SheetID_range.split('-')[0]),int(args.SheetID_range.split('-')[1])+1):
+                    update_entry_manually(models[i], args)
+                    print(models[i][args.key])
+            except IndexError:
+                print('"%s" is not a valid range of SheetIDs' % args.SheetID)
+        elif args.SheetID<2:
+            print('Need to specify a model identifier: either a "SheetID" (i.e. >1, e.g. with "--SheetID 3") or an "alias" ("--alias xx)')
+        else:
+            update_entry_manually(models[args.SheetID-2], args)
+            print(models[args.SheetID-2][args.key])
         local_db.save_models(models)
     if args.Protocol=='Add-KG-Metadata-to-Local':
         models = local_db.load_models()
         local_db.create_a_backup_version(models)
-        if args.SheetID_range is not '':
+        if args.SheetID_range not in ['', None]:
             try:
                 for i in range(int(args.SheetID_range.split('-')[0]),int(args.SheetID_range.split('-')[1])+1):
                     add_KG_metadata_to_LocalDB(models, i)
