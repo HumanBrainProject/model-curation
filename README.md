@@ -339,6 +339,29 @@ A detailed analysis of the model curation is available at:
 ![stats/summary.md](https://github.com/yzerlaut/model-curation/blob/master/stats/summary.md)
 
 
+## Backup system
+
+At each operation (i.e. execution of the `update_DB.py` script), a backup of the local database is made. Backup files are stored in `db/backups/` as _pickle_ files with the format `**datetime**.pkl`.
+
+```
+ls db/backups/
+```
+gives:
+```
+_                        2019.11.18-16:27:01.pkl  2019.12.03-12:47:55.pkl  2019.12.03-18:15:19.pkl  Django_DB.pkl
+2019.11.12-17:30:46.pkl  2019.11.19-11:48:54.pkl  2019.12.03-16:07:18.pkl  2019.12.11-10:29:17.pkl
+2019.11.18-16:19:48.pkl  2019.11.19-11:49:18.pkl  2019.12.03-17:19:57.pkl  CatalogDB.pkl
+```
+
+Those backup files will accumulate and there will be the need to remove some of them over time. This can be performed with the command:
+
+```
+python db/clean_up_db.py 100
+```
+
+The last number indexes the number of backup files kept, default is `20`.
+
+
 ## ACKNOWLEDGEMENTS
 
 All code is copyright 2019-2020 CNRS unless otherwise indicated.

@@ -154,13 +154,12 @@ def from_catalog_to_local_db(new_entries_only=True):
     print('number of models after update from Catalog: %i' % len(new_models))
     return new_models
 
-def add_KG_metadata_to_LocalDB(models, SheetID):
+def add_KG_metadata_to_LocalDB(model, index):
     print(' === FETCHING METADATA FROM KG TO ADD TO LOCAL DB === ')
     print(' ---- Authors:')
-    KG_db.replace_authors_with_KG_entries(models[SheetID-2]) # Authors
+    KG_db.replace_authors_with_KG_entries(models[index]) # Authors
     print(' ---- Other fields:')
-    KG_db.replace_fields_with_KG_entries(models[SheetID-2])            
-    # pprint.pprint(models[SheetID-2])
+    KG_db.replace_fields_with_KG_entries(models[index])            
 
 def update_entry_manually(model, args):
 
@@ -217,7 +216,18 @@ if __name__=='__main__':
 
     models = local_db.load_models()
     local_db.create_a_backup_version(models) # always create a backup version first
-    
+
+    ModelIDs = []
+    if args.SheetID_range!='':
+        try:
+            ModelIDs = np.arange(int(args.SheetID_range.split('-')[0]),int(args.SheetID_range.split('-')[1])+1)-2 # ** -2 for indexes in LocalDB** 
+        except BaseException as e:
+            print('\n ---> the range for sheet IDs needs to be of the form: "--SheetID_range 34-39"')
+    elif args.SheetID>1:
+        ModelIDs = [args.SheetIDn]
+    elif args.Protocol in ['Local', 'Add-KG-Metadata-to-Local', 'Local-to-KG']:
+        print('Need to specify a model identifier as a Google Sheet index (i.e. *>=2*, e.g. with "--SheetID 3")')
+        
     if args.Protocol=='Fetch-Catalog':
         # backing up the previous database
         os.system('mv db/Django_DB.pkl db/backups/Django_DB.pkl')
@@ -239,33 +249,15 @@ if __name__=='__main__':
     if args.Protocol=='Local':
         local_db.create_a_backup_version(local_db.load_models())
         models = local_db.load_models()
-        if args.SheetID_range not in ['', None]:
-            try:
-                for i in range(int(args.SheetID_range.split('-')[0]),int(args.SheetID_range.split('-')[1])+1):
-                    update_entry_manually(models[i], args)
-                    print(models[i][args.key])
-            except IndexError:
-                print('"%s" is not a valid range of SheetIDs' % args.SheetID)
-        elif args.SheetID<2:
-            print('Need to specify a model identifier: either a "SheetID" (i.e. >1, e.g. with "--SheetID 3") or an "alias" ("--alias xx)')
-        else:
-            update_entry_manually(models[args.SheetID-2], args)
-            print(models[args.SheetID-2][args.key])
+        for i in ModelIDs:
+            update_entry_manually(models[i], args)
+            print(models[i][args.key])
         local_db.save_models(models)
     if args.Protocol=='Add-KG-Metadata-to-Local':
         models = local_db.load_models()
         local_db.create_a_backup_version(models)
-        if args.SheetID_range not in ['', None]:
-            try:
-                for i in range(int(args.SheetID_range.split('-')[0]),int(args.SheetID_range.split('-')[1])+1):
-                    add_KG_metadata_to_LocalDB(models, i)
-            except IndexError:
-                print('"%s" is not a valid range of SheetIDs' % args.SheetID)
-        elif args.SheetID<2:
-            print('Need to specify a model identifier: either a "SheetID" (i.e. >1, e.g. with "--SheetID 3") or an "alias" ("--alias xx)')
-        else:
-            add_KG_metadata_to_LocalDB(models, args.SheetID)
-        # pprint.pprint(models[args.SheetID-2])
+        for i in ModelIDs:
+            add_KG_metadata_to_LocalDB(models, i)
         local_db.save_models(models)
     if args.Protocol=='Local-to-Spreadsheet':
         models = local_db.load_models()
@@ -279,10 +271,8 @@ if __name__=='__main__':
         local_db.save_models(models)
     if args.Protocol=='Local-to-KG':
         models = local_db.load_models()
-        if args.SheetID<2:
-            print('Need to specify a model identifier: either a "SheetID" (i.e. >1, e.g. with "--SheetID 3") or an "alias" ("--alias xx)')
-        else:
-            KG_db.create_new_instance(models[args.SheetID-2])
+        for i in ModelIDs:
+            KG_db.create_new_instance(models[i])
     if args.Protocol=='SS-to-Local':
         models = gsheet.read_from_spreadsheet(Range=[1,10000])
         print(len(models))
