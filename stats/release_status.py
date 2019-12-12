@@ -2,7 +2,7 @@ import os, sys, pathlib
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 import numpy as np
 import matplotlib.pylab as plt
-
+import datetime
 
 from src import local_db
 
@@ -41,8 +41,12 @@ O_entries = ['Blue Brain Project',
              'KOKI-UNIC',
              'KTH-UNIC']
 
-fig, AX = plt.subplots(2, len(keys), figsize=(2*len(keys),5))
+fig, AX = plt.subplots(2, len(keys), figsize=(3.5*len(keys),5))
 plt.subplots_adjust(left=.03, right=.9, top=.88, bottom=.1, wspace=.6, hspace=.9)
+
+plt.annotate('* %s *' % str(datetime.date.today()),
+             (.01, .97), xycoords='figure fraction', style='italic', size=12,
+             ha='left', va='center')
 
 plt.annotate('Model Catalog: %i entries' % len(np.unique(model_names)),
              (.5, .97), xycoords='figure fraction', weight='bold', size=12,
@@ -110,4 +114,4 @@ for kk, key, entries in zip(range(len(keys)), keys,
                       xycoords='axes fraction', ha='center', va='top')
     # # looping over models
 
-plt.show()
+plt.savefig(os.path.join(str(pathlib.Path(__file__).resolve().parents[0]), 'figs', 'release_status.png'))

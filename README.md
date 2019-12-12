@@ -370,7 +370,7 @@ Current status of Model Curation (Nov. 20th):
 
 A detailed analysis of the model curation is available at:
 
-![stats/summary.md](https://github.com/yzerlaut/model-curation/blob/master/stats/summary.md)
+![stats/README.md](https://github.com/yzerlaut/model-curation/blob/master/stats/README.md)
 
 
 ## Backup system
