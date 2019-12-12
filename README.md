@@ -364,11 +364,11 @@ you can manually construct the list for the fields that you want to visualize. O
 
 ## Stats
 
-Current status of Model Curation (Nov. 20th):
+Status of Model Curation (Nov. 20th):
 
 ![stats](stats/Model-Curation.png)
 
-A detailed analysis of the model curation is available at:
+A detailed and updated analysis of the model curation is available at:
 
 ![stats/README.md](https://github.com/yzerlaut/model-curation/blob/master/stats/README.md)
 
