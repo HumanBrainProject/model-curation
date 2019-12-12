@@ -208,7 +208,7 @@ if __name__=='__main__':
     
     parser.add_argument('-sid', "--SheetID", type=int, default=-1,
                         help="identifier of a model instance on the spreadsheet")
-    parser.add_argument('-sidr', "--SheetID_range", type=str,
+    parser.add_argument('-sidr', "--SheetID_range", type=str, default='',
                         help="identifier of a model instance on the spreadsheet")
     parser.add_argument('-a', "--alias", type=str,
                         help="alias identifier of a model instance (as stated on the spreadsheet)")
@@ -224,9 +224,10 @@ if __name__=='__main__':
         except BaseException as e:
             print('\n ---> the range for sheet IDs needs to be of the form: "--SheetID_range 34-39"')
     elif args.SheetID>1:
-        ModelIDs = [args.SheetIDn]
+        ModelIDs = [args.SheetID-2] # ** -2 for indexes in LocalDB** 
     elif args.Protocol in ['Local', 'Add-KG-Metadata-to-Local', 'Local-to-KG']:
         print('Need to specify a model identifier as a Google Sheet index (i.e. *>=2*, e.g. with "--SheetID 3")')
+
         
     if args.Protocol=='Fetch-Catalog':
         # backing up the previous database
