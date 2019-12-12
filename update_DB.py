@@ -161,28 +161,34 @@ def add_KG_metadata_to_LocalDB(model, index):
     print(' ---- Other fields:')
     KG_db.replace_fields_with_KG_entries(models[index])            
 
-def update_entry_manually(model, args):
+def update_entry_manually(models, index, args):
 
-    if (args.key in model) and args.value is not None:
-        if type(model[args.key]) is tuple:
-            if input('Do you want to replace the value "%s" for key "%s" by: "%s" ? y/[n]\n' % (model[args.key][0], args.key, args.value[0])) in ['y', 'yes']:
-                model[args.key] = (args.value[0], '')
-                print('[ok] value changed to', model[args.key])
+    if (args.key in models[index]) and (args.value is not None):
+        if type(models[index][args.key]) is str:
+            if input('Do you want to replace the value "%s" for key "%s" by: "%s" ? y/[n]\n' % (models[index][args.key], args.key, args.value[0])) in ['y', 'yes']:
+                models[index][args.key] = args.value[0]
+                print('[ok] value changed to', models[index][args.key])
             else:
                 print('[!!] value not changed')
-        elif type(model[args.key]) is list:
-            if input('Do you want to replace the value "%s" for key "%s" by: "%s" ? y/[n]\n' % (model[args.key], args.key, args.value)) in ['y', 'yes']:
-                model[args.key] = []
+        elif type(models[index][args.key]) is tuple:
+            if input('Do you want to replace the value "%s" for key "%s" by: "%s" ? y/[n]\n' % (models[index][args.key][0], args.key, args.value[0])) in ['y', 'yes']:
+                models[index][args.key] = (args.value[0], '')
+                print('[ok] value changed to', models[index][args.key])
+            else:
+                print('[!!] value not changed')
+        elif type(models[index][args.key]) is list:
+            if input('Do you want to replace the value "%s" for key "%s" by: "%s" ? y/[n]\n' % (models[index][args.key], args.key, args.value)) in ['y', 'yes']:
+                models[index][args.key] = []
                 print(args.value)
                 for elem in args.value:
-                    model[args.key].append((elem, ''))
-                print('[ok] value changed to', model[args.key])
+                    models[index][args.key].append((elem, ''))
+                print('[ok] value changed to', models[index][args.key])
             else:
                 print('[!!] value not changed')
-    elif (args.key in model):
-        print('The value for key %s is currently: %s' % (args.key, model[args.key]))
+    elif (args.key in models[index]):
+        print('The value for key %s is currently: %s' % (args.key, models[index][args.key]))
     else:
-        pprint.pprint(model)
+        pprint.pprint(models[index])
         print('[!!] key not found')
     
 if __name__=='__main__':
@@ -251,7 +257,7 @@ if __name__=='__main__':
         local_db.create_a_backup_version(local_db.load_models())
         models = local_db.load_models()
         for i in ModelIDs:
-            update_entry_manually(models[i], args)
+            update_entry_manually(models, i, args)
             print(models[i][args.key])
         local_db.save_models(models)
     if args.Protocol=='Add-KG-Metadata-to-Local':

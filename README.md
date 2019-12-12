@@ -198,7 +198,7 @@ python update_DB.py Add-KG-Metadata-to-Local --SheetID 14
 python update_DB.py Local-to-Spreadsheet
 ```
 
-Note that if some metadata entries are not already present in the Knowledge Graph (e.g. `model_scope`, `cell_type`, ...), it should be manually created using the [Knowledge Graph Editor](https://kg-editor.humanbrainproject.eu/). Once all metadata information do exist in the Knowledge Graph, re-run the above command `Addd-KG-Metadata-to-Local` to insure the cross-linking to Knowledge Graph entries.
+Note that if some metadata entries are not already present in the Knowledge Graph (e.g. `model_scope`, `cell_type`, ...), it should be manually created using the [Knowledge Graph Editor](https://kg-editor.humanbrainproject.eu/). Once all metadata information do exist in the Knowledge Graph, re-run the above command `Add-KG-Metadata-to-Local` to insure the cross-linking to Knowledge Graph entries.
 
 You can now visualize the result in the *Model Entries* sheet:
 ![fixed1](docs/example_ME_fixed.png)
@@ -217,17 +217,51 @@ python update_DB Local-to-KG -sid 14 # "-sid" is the shortcut for "--SheetID"
 This command invites you to review the model entry. If everything is fine, you can validate the submission.
 
 ```
-{ 
-	------------------------------------------------
-	{{ DICTIONARY CORRESPONDING TO THE MODEL ENTRY}}
-	-----------------------------------------------
-}
+
+{'KG_id': 'https://nexus.humanbrainproject.org/v0/data/uniminds/core/modelinstance/v1.0.0/a8b0d44a-267d-4cd5-b205-eee5c052603f',
+ 'KG_identifier': '0aa891e0b9eb7f88d76acad0925352717dbd0c2a',
+ 'abstraction_level': ('spiking neurons',
+                       '33cd7f9e-0f6e-46af-8a55-1e3fbebbb0f0'),
+ 'alias': 'Rall-Morpho-L5PyrMouseV1 @ 78492b6',
+ 'associated_dataset': [('Input Impedance Recordings in Neocortical Pyramidal '
+                         'cells',
+                         ''),
+                        ('5a95ceb4-e303-42e3-9558-83b9ccb45976', '')],
+ 'associated_experimental_preparation': [],
+ 'associated_method': [],
+ 'author(s)': [('Zerlaut, Yann', 'd7db810e-57e4-49f3-9cde-a3e03458ffa5'),
+               ('Destexhe, Alain', '79e451c0-59f6-425b-a336-9c8e7955aefa')],
+ 'brain_region': ('cerebral cortex', '7e397000-243c-4773-9cbe-00167dfc384d'),
+ 'cell_type': ('L5 pyramidal cell', '044d28e0-46fa-4104-aee2-ca3d7d50e03e'),
+ 'code_format': ('NEST-Python', '112c4aca-f193-421b-a1dc-047769538ef4'),
+ 'code_location': 'https://github.com/yzerlaut/diverse_coupling_to_synaptic_activity',
+ 'creation_date': '2019-09-02 08:04:36',
+ 'description': 'Neocortical processing [...] couple to local network \n'
+                '78492b6',
+ 'identifier': 'b0aaf1f5-9c3a-4d2b-ad94-5b06296b4066',
+ 'images': [{'caption': "Estimating  the parameters of Rall's morphology model "
+                        'from Input Impedance measurements',
+             'url': 'https://raw.github.com/yzerlaut/diverse_coupling_to_synaptic_activity/master/figures/fig2_demo.png'}],
+ 'in_KG': 'True',
+ 'license': ('CC BY-NC-SA 4.0', '8462091d-45a0-4e57-a9cc-869a667d8702'),
+ 'model_scope': ('single cell', '3f85ad0d-71d4-4068-aa4a-b36bf4f06b27'),
+ 'model_type': ('', ''),
+ 'name': 'Rall Morphology Model for Layer 5 Pyramidal Cells in Mouse V1',
+ 'organization': ('HBP-SP5', ''),
+ 'owner': ('Zerlaut, Yann', 'd7db810e-57e4-49f3-9cde-a3e03458ffa5'),
+ 'parameters': 'None',
+ 'pla_components': ('None', ''),
+ 'project': ('None', ''),
+ 'public': 'True',
+ 'released_in_KG': 'False',
+ 'timestamp': '20190902080436',
+ 'used_software': [],
+ 'version': '78492b6'}
 ===========================================================
   the entry *can* be pushed to the Knowledge Graph
     please review the above information carefully
 ===========================================================
 are you sure that the above informations are correct ? y/[n]
-
 ```
 
 ### 7) Release models in the KG
