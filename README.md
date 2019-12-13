@@ -225,8 +225,7 @@ This command invites you to review the model entry. If everything is fine, you c
  'alias': 'Rall-Morpho-L5PyrMouseV1 @ 78492b6',
  'associated_dataset': [('Input Impedance Recordings in Neocortical Pyramidal '
                          'cells',
-                         ''),
-                        ('5a95ceb4-e303-42e3-9558-83b9ccb45976', '')],
+                         '5a95ceb4-e303-42e3-9558-83b9ccb45976')],
  'associated_experimental_preparation': [],
  'associated_method': [],
  'author(s)': [('Zerlaut, Yann', 'd7db810e-57e4-49f3-9cde-a3e03458ffa5'),
