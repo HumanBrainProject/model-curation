@@ -109,6 +109,60 @@ This should output something like:
 
 You should should be set up !
 
+## Model template
+
+The metadata are stored as a tuple of strings (`name`, `UUID`), where =name= is a string identifyin the entry and `UUID` is the Knowledge graph identifier the name . Either "free" strings or strings corresponding to the UUID in the Knowledge Graph (e.g. the metadata related to the Person `Yann Zerlaut` has the UUID: `003beed8-1ee8-45ec-8737-785ca6239ef0`).
+
+An empty template is stored in the =model_template.py= file. It reads:
+```
+template = {
+    
+    # Note that the order matters (it used for display in the Spreadsheets)
+    "alias":"", # a string
+    
+    "version":"", # a string
+    
+    "owner":("",""), # a tuple of 2 strings
+    
+    "name":"", # a string
+
+    "description":"", # a string
+    
+    "author(s)":[], # a set of tuples of 2 strings
+
+    "identifier":"", # a string -> generated during model curation !
+
+    "code_location": "", # a string
+
+    "public":"", # a string either "TRUE" or "FALSE" (the inverse of private in the Model Catalog)
+    
+    # ------ KG METADATA -------- # 
+    "abstraction_level":("",""), # a tuple of 2 strings
+    "brain_region":("",""), # a tuple of 2 strings
+    "cell_type":[], # a set of strings
+    "creation_date":"", # a string
+    "model_scope":("",""), # a tuple of 2 strings
+    "model_type":("",""), # a tuple of 2 strings
+    "organization":("",""), # a tuple of 2 strings
+    "pla_components":("",""), # a tuple of 2 strings
+    "project":("",""), # a tuple of 2 strings
+    "associated_dataset":[], # a set of tuples of 2 strings
+    "associated_method":[], # a set of tuples of 2 strings
+    "associated_experimental_preparation":[], # a set of tuples of 2 strings
+    "used_software":[], # a set of tuples of 2 strings
+    "code_format": ("",""), # a tuple of 2 strings
+    "license": ("",""), # a tuple of 2 strings
+    "parameters": "", # a string
+    
+    # ------ IMAGES -------- # 
+     "images":[], # list of dictionaries
+    # elements of the "images" list should be of the form:
+    # {"url":"",
+    #  "caption":""}
+}
+```
+
+
 ## Curation steps
 
 We detail below the different steps composing the curation pipeline (see above schematic for their numbering).
@@ -279,59 +333,6 @@ python update_DB Release-Summary
 The Model Catalog database considers entries which are conceptual models that can have evolving implementation over time. On the other hand, the Knowledge Graph only considers specific model instances with a well-defined implementation that can be potentially released (and therefore should be ![FAIR](https://www.go-fair.org/fair-principles/)).
 
 The chosen approach therefore duplicates a model across all its versions in the Knowledge Graph. A model with 10 versions in the Model Catalog will therefore have 10 ModelInstances in the Knowledge Graph.
-
-## Model template
-
-The metadata are stored as a tuple of strings (`name`, `UUID`), where =name= is a string identifyin the entry and `UUID` is the Knowledge graph identifier the name . Either "free" strings or strings corresponding to the UUID in the Knowledge Graph (e.g. the metadata related to the Person `Yann Zerlaut` has the UUID: `003beed8-1ee8-45ec-8737-785ca6239ef0`).
-
-An empty template is stored in the =model_template.py= file. It reads:
-```
-template = {
-    
-    # Note that the order matters (it used for display in the Spreadsheets)
-    "alias":"", # a string
-    
-    "version":"", # a string
-    
-    "owner":("",""), # a tuple of 2 strings
-    
-    "name":"", # a string
-
-    "description":"", # a string
-    
-    "author(s)":[], # a set of tuples of 2 strings
-
-    "identifier":"", # a string -> generated during model curation !
-
-    "code_location": "", # a string
-
-    "public":"", # a string either "TRUE" or "FALSE" (the inverse of private in the Model Catalog)
-    
-    # ------ KG METADATA -------- # 
-    "abstraction_level":("",""), # a tuple of 2 strings
-    "brain_region":("",""), # a tuple of 2 strings
-    "cell_type":[], # a set of strings
-    "creation_date":"", # a string
-    "model_scope":("",""), # a tuple of 2 strings
-    "model_type":("",""), # a tuple of 2 strings
-    "organization":("",""), # a tuple of 2 strings
-    "pla_components":("",""), # a tuple of 2 strings
-    "project":("",""), # a tuple of 2 strings
-    "associated_dataset":[], # a set of tuples of 2 strings
-    "associated_method":[], # a set of tuples of 2 strings
-    "associated_experimental_preparation":[], # a set of tuples of 2 strings
-    "used_software":[], # a set of tuples of 2 strings
-    "code_format": ("",""), # a tuple of 2 strings
-    "license": ("",""), # a tuple of 2 strings
-    "parameters": "", # a string
-    
-    # ------ IMAGES -------- # 
-     "images":[], # list of dictionaries
-    # elements of the "images" list should be of the form:
-    # {"url":"",
-    #  "caption":""}
-}
-```
 
 ## Configuration file
 
