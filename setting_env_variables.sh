@@ -22,6 +22,7 @@ for key, val in SPREADSHEETS_ID.items():
 # print("echo The spreadsheet for the model curation is avialble at the URL:")
 # print("echo https://docs.google.com/spreadsheets/d/%s/edit" % SPREADSHEETS_ID["MODEL_CURATION_SPREADSHEET"])
 magic+="export HBP_token="+str(data1["access_token"])+"\n";
+magic+="export HBP_AUTH_TOKEN="+str(data1["access_token"])+"\n";
 magic+="export HBP_STORAGE_TOKEN="+str(data2["auth"]["token"]["access_token"])+"\n" ;
 magic+="export curation_url=https://docs.google.com/spreadsheets/d/%s/edit" % SPREADSHEETS_ID["MODEL_CURATION_SPREADSHEET"]	+"" ;
 print("echo -----VALIDATION FRAMEWORK INFOS ------------------- ")

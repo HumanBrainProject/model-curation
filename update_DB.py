@@ -245,6 +245,8 @@ if __name__=='__main__':
         os.system('cd '+str(validation_path)+'; python manage.py get_django_db')
         os.system('mv '+os.path.join(validation_path, 'Django_DB.pkl')+' db/')
         print('[ok] Database succesfully moved to "db/" folder (Django_DB.pkl)')
+        print('----------------------------------------------------------------------')
+        print('---> if everything went fine, overwrite the previous copy of the catalog db with "cp db/Django_DB.pkl db/Catalog_DB.pkl"')
     if args.Protocol=='Catalog-to-Local':
         # read the Catalog DB and update the set of models
         models = from_catalog_to_local_db()
