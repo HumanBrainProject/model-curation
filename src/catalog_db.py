@@ -5,7 +5,7 @@ import time
 
 from fairgraph.client import KGClient
 from fairgraph.base import KGProxy
-from fairgraph.brainsimulation import ModelProject #, AbstractionLevel, BrainStructure, CellularTarget, License, ModelFormat, ModelScope, Publication, StudyTarget, FileBundle
+from fairgraph.brainsimulation import ModelProject, ModelInstance #, AbstractionLevel, BrainStructure, CellularTarget, License, ModelFormat, ModelScope, Publication, StudyTarget, FileBundle
 
 
 def load_models(client):
@@ -17,9 +17,8 @@ def load_models(client):
 def load_model_instances(client):
 
     MODEL_INSTANCES = []
-    
-    models = ModelProject.list(client)
-    
+
+    models = ModelProject.list(client, size=1000)
     for model in models:
         # print('----------------------------------------')
         # print('- %s ' % model.name)
@@ -32,9 +31,11 @@ def load_model_instances(client):
         else:
             print('Ignoring %s @ %s' % (model.name, model.date_created))
             pass # we don't care about models without specific version
-
         
-    return MODEL_INSTANCES
+    DATES = np.array([time.mktime(minst.timestamp.timetuple()) for minst in MODEL_INSTANCES])
+
+    
+    return [MODEL_INSTANCES[i] for i in np.argsort(DATES)]
 
 
 if __name__=='__main__':
@@ -43,7 +44,5 @@ if __name__=='__main__':
     # models = load_models(client)
 
     MODEL_INSTANCES = load_model_instances(client)
-
-    DATES = np.array([time.mktime(minst.timestamp.timetuple()) for minst in MODEL_INSTANCES])
-    for j, i in enumerate(np.argsort(DATES)):
-        print(j, ') ', MODEL_INSTANCES[i].name, ' --', MODEL_INSTANCES[i].timestamp)
+    for i, minst in enumerate(MODEL_INSTANCES):
+        print(i, ') ', minst.name)
