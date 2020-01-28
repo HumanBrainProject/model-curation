@@ -61,12 +61,16 @@ def reformat_for_spreadsheet(key, val):
         for elem in val:
             if type(elem) is tuple:
                 output += str(elem[0])
+            elif type(elem) is dict:
+                output += elem['family_name']+', '+elem['given_name']
             else:
                 output += str(elem)
             output += ', '
         return output[:-2]
     elif type(val) is tuple:
         return str(val[0])
+    elif type(val) is dict:
+        return val['family_name']+', '+val['given_name']
     elif key=='images':
         return str(len(val)) # just the number of images
     else:

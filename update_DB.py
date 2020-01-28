@@ -90,69 +90,69 @@ def update_release_summary(models,
         spreadsheetId=spreadsheetId,
         body=batch_update_values_request_body).execute()
     
+# def from_catalog_to_local_db(new_entries_only=True):
 
-def from_catalog_to_local_db(new_entries_only=True):
+#     models = catalog_db.load_models()
 
-    models = catalog_db.load_models()
-
-    if new_entries_only:
-        previous_models = local_db.load_models()
-        print('number of models before update from Catalog: %i' % len(previous_models))
-        name_previous_models = [m['name'] for m in previous_models]
-    else:
-        previous_models = [] # no previous models to fully rewrite the DB
-        name_previous_models = []
+#     if new_entries_only:
+#         previous_models = local_db.load_models()
+#         print('number of models before update from Catalog: %i' % len(previous_models))
+#         name_previous_models = [m['name'] for m in previous_models]
+#     else:
+#         previous_models = [] # no previous models to fully rewrite the DB
+#         name_previous_models = []
     
-    new_models = previous_models
+#     new_models = previous_models
     
-    for model in models:
+#     for model in models:
 
-        # the Catalog DB can only update new entries to the DB
-        if (model['name'] not in name_previous_models):
+#         # the Catalog DB can only update new entries to the DB
+#         if (model['name'] not in name_previous_models):
 
-            model_to_be_added = model_template.template.copy()
-            # dealing with the keys in common
-            for key, val in model_template.template.items():
-                if key=='author(s)':
-                    model_to_be_added['author(s)'] = reformat_from_catalog(key, val, model['author'])
-                elif key=='public':
-                    if model['private']=='False':
-                        model_to_be_added['public'] = 'True'
-                elif key in model:
-                    model_to_be_added[key] = reformat_from_catalog(key, val, model[key])
+#             model_to_be_added = model_template.template.copy()
+#             # dealing with the keys in common
+#             for key, val in model_template.template.items():
+#                 if key=='author(s)':
+#                     model_to_be_added['author(s)'] = reformat_from_catalog(key, val, model['author'])
+#                 elif key=='public':
+#                     if model['private']=='False':
+#                         model_to_be_added['public'] = 'True'
+#                 elif key in model:
+#                     model_to_be_added[key] = reformat_from_catalog(key, val, model[key])
 
-            if model_to_be_added['owner'][0] in ['', 'None']:
-                model_to_be_added['owner'] = model_to_be_added['author(s)'][0]
+#             if model_to_be_added['owner'][0] in ['', 'None']:
+#                 model_to_be_added['owner'] = model_to_be_added['author(s)'][0]
             
-            if len(model['instances'])==0: # if no version, we add a fake one at submission data
-                model['instances'].append({'version':'None',
-                                           'id':'', 'parameters':'',
-                                           'source':'', 'description':'',
-                                           'timestamp':model_to_be_added['creation_date']})
+#             if len(model['instances'])==0: # if no version, we add a fake one at submission data
+#                 model['instances'].append({'version':'None',
+#                                            'id':'', 'parameters':'',
+#                                            'source':'', 'description':'',
+#                                            'timestamp':model_to_be_added['creation_date']})
 
-            # looping over versions
-            for version in model['instances']:
-                new_models.append(model_to_be_added.copy())
-                new_models[-1]['timestamp'] = reformat_date_to_timestamp(version['timestamp'])
-                # inst['timestamp'][:19].replace(':','').replace(' ','').replace('-','')
-                new_models[-1]['code_location'] = version['source']
-                new_models[-1]['version'] = version['version']
-                # we add the version-description to the description
-                new_models[-1]['description'] += '\nversion: '+version['version']
-                # parameters
-                new_models[-1]['parameters'] = version['parameters']
-                new_models[-1]['identifier'] = version['id']
+#             # looping over versions
+#             for version in model['instances']:
+#                 new_models.append(model_to_be_added.copy())
+#                 new_models[-1]['timestamp'] = reformat_date_to_timestamp(version['timestamp'])
+#                 # inst['timestamp'][:19].replace(':','').replace(' ','').replace('-','')
+#                 new_models[-1]['code_location'] = version['source']
+#                 new_models[-1]['version'] = version['version']
+#                 # we add the version-description to the description
+#                 new_models[-1]['description'] += '\nversion: '+version['version']
+#                 # parameters
+#                 new_models[-1]['parameters'] = version['parameters']
+#                 new_models[-1]['identifier'] = version['id']
 
-                # let's insure that we have a proper alias
-                if new_models[-1]['alias'] in ['', 'None']:
-                    new_models[-1]['alias'] = find_meaningfull_alias(new_models[-1]['name'])
-                elif len(new_models[-1]['alias'].split(' '))>1:
-                    new_models[-1]['alias'] = concatenate_words(new_models[-1]['alias'].split(' '))
-                # and add the version 
-                new_models[-1]['alias'] += ' @ '+version_naming(version['version'])
+#                 # let's insure that we have a proper alias
+#                 if new_models[-1]['alias'] in ['', 'None']:
+#                     new_models[-1]['alias'] = find_meaningfull_alias(new_models[-1]['name'])
+#                 elif len(new_models[-1]['alias'].split(' '))>1:
+#                     new_models[-1]['alias'] = concatenate_words(new_models[-1]['alias'].split(' '))
+#                 # and add the version 
+#                 new_models[-1]['alias'] += ' @ '+version_naming(version['version'])
                     
-    print('number of models after update from Catalog: %i' % len(new_models))
-    return new_models
+#     print('number of models after update from Catalog: %i' % len(new_models))
+#     return new_models
+
 
 def add_KG_metadata_to_LocalDB(model, index):
     print(' === FETCHING METADATA FROM KG TO ADD TO LOCAL DB === ')
@@ -199,7 +199,7 @@ if __name__=='__main__':
     parser.add_argument("Protocol",
                         help="""
                         type of database update to be applied, choose between:
-                        - 'Catalog-to-Local' 
+                        - 'Catalog-to-Local'
                         - 'Catalog-to-Local-full-rewriting' (to restart from the CatalogDB)
                         - 'Add-KG-Metadata-to-Local'
                         - 'Local-to-Spreadsheet' 
@@ -223,38 +223,37 @@ if __name__=='__main__':
     models = local_db.load_models()
     local_db.create_a_backup_version(models) # always create a backup version first
 
-    ModelIDs = []
+    # DEAL with MODEL ID
     if args.SheetID_range!='':
         try:
-            ModelIDs = np.arange(int(args.SheetID_range.split('-')[0]),int(args.SheetID_range.split('-')[1])+1)-2 # ** -2 for indexes in LocalDB** 
+            ModelIDs = np.arange(int(args.SheetID_range.split('-')[0]),int(args.SheetID_range.split('-')[1])+1)-1
         except BaseException as e:
             print('\n ---> the range for sheet IDs needs to be of the form: "--SheetID_range 34-39"')
-    elif args.SheetID>1:
-        ModelIDs = [args.SheetID-2] # ** -2 for indexes in LocalDB** 
-    elif args.Protocol in ['Local', 'Add-KG-Metadata-to-Local', 'Local-to-KG']:
+    elif args.SheetID>=1:
+        ModelIDs = [args.SheetID-1] # ** -2 for indexes in LocalDB** 
+    elif args.Protocol in ['Catalog-to-Uniminds']:
+        ModelIDs = []
         print('Need to specify a model identifier as a Google Sheet index (i.e. *>=2*, e.g. with "--SheetID 3")')
+        
+    # ModelIDs = []
+    # if args.SheetID_range!='':
+    #     try:
+    #         ModelIDs = np.arange(int(args.SheetID_range.split('-')[0]),int(args.SheetID_range.split('-')[1])+1)-2 # ** -2 for indexes in LocalDB** 
+    #     except BaseException as e:
+    #         print('\n ---> the range for sheet IDs needs to be of the form: "--SheetID_range 34-39"')
+    # elif args.SheetID>1:
+    #     ModelIDs = [args.SheetID-2] # ** -2 for indexes in LocalDB** 
+    # elif args.Protocol in ['Local', 'Add-KG-Metadata-to-Local', 'Local-to-KG']:
+    #     print('Need to specify a model identifier as a Google Sheet index (i.e. *>=2*, e.g. with "--SheetID 3")')
 
         
     if args.Protocol=='Fetch-Catalog':
-        # backing up the previous database
-        os.system('mv db/Django_DB.pkl db/backups/Django_DB.pkl')
-        path = '/home/yzerlaut/work/hbp-validation-framework'
-        validation_path = os.path.join(path, 'validation_service')
-        command_path = os.path.join(path, 'model_validation_api', 'management', 'commands')
-        os.system('cp src/django_db.py '+str(os.path.join(command_path, 'get_django_db.py')))
-        os.system('cd '+str(validation_path)+'; python manage.py get_django_db')
-        os.system('mv '+os.path.join(validation_path, 'Django_DB.pkl')+' db/')
-        print('[ok] Database succesfully moved to "db/" folder (Django_DB.pkl)')
-        print('----------------------------------------------------------------------')
-        print('---> if everything went fine, overwrite the previous copy of the catalog db with "cp db/Django_DB.pkl db/Catalog_DB.pkl"')
+        catalog_models = catalog_db.load_model_instances()
+        catalog_db.save_models(catalog_models)
+        catalog_db.show_list(models=catalog_models)
     if args.Protocol=='Catalog-to-Local':
-        # read the Catalog DB and update the set of models
-        models = from_catalog_to_local_db()
-        # then save the new version
-        local_db.save_models(models)
-    if args.Protocol=='Catalog-to-Local-full-rewriting':
-        models = from_catalog_to_local_db(new_entries_only=False)
-        local_db.save_models(models)
+        local_db.create_a_backup_version(models)
+        local_db.save_models(catalog_db.load_models())
     if args.Protocol=='Local':
         local_db.create_a_backup_version(local_db.load_models())
         models = local_db.load_models()

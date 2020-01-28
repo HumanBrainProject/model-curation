@@ -1,7 +1,7 @@
 import sys, os, pathlib
 from datetime import datetime
 import numpy as np
-import pickle
+import pickle, time
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 
 def create_a_backup_version(models):
@@ -22,7 +22,6 @@ def save_models(models):
     pickle.dump(models, pkl_file)
     pkl_file.close()
 
-    
 def load_models(filename=None):
     """ """
     if filename is None:
@@ -33,9 +32,17 @@ def load_models(filename=None):
     pkl_file.close()
     
     # we sort them by creation date (the last one is the newest)
-    dates = np.array([int(model['timestamp']) for model in models])
+    dates = np.array([time.mktime(minst['date_created'].timetuple()) for minst in models])
     return [models[i] for i in np.argsort(dates)[::-1]]
 
+def show_list():
+    
+    models = load_models()
+
+    for i, minst in zip(range(len(models))[::-1], models[::-1]):
+        if (len(minst['name'].split('IGNORE'))==1) and (minst['name'] not in ['skjdfhskjdfh @ sadf', 'lkfjgldkfgj @ sfdgdfg', 'lkfjgldkfgj @']) and (len(minst['name'].split('MEModel'))==1 or show_ME):
+            print(i+1, ') ', minst['name'].replace('ModelInstance for ', ''))
+            
 
 def get_model_attributes():
     models = load_models()
@@ -45,7 +52,7 @@ def get_model_attributes():
 if __name__=='__main__':
     create_a_backup_version(load_models())
     models = load_models()
-    save_models_locally(models)
+    save_models(models)
     # print(models[4].keys())
     # print(models[4]['author'])
                             
