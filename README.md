@@ -17,6 +17,7 @@ The curation pipeline is depicted in the following schematic:
 ![process](docs/process.png)
 
 ## Installation and environment setup
+
 ### Installing dependencies
 
 You can install the dependencies of this module by running:
@@ -162,7 +163,6 @@ template = {
 }
 ```
 
-
 ## Curation steps
 
 We detail below the different steps composing the curation pipeline (see above schematic for their numbering).
@@ -216,13 +216,23 @@ This will update both the *Model Entries* and the *KG Release Summary* sheets of
 
 ### 3) Visualize metadata and find missing information
 
-This is done by visualizing the two sheets of the Google Spreadsheet (you can get the url of the spreadsheet by typing in the shell `echo $curation_url`, this was loaded by the `setting_env_variables.sh` script).
+#### On the Spreadsheet
+This can be done by visualizing the two sheets of the Google Spreadsheet (you can get the url of the spreadsheet by typing in the shell `echo $curation_url`, this was loaded by the `setting_env_variables.sh` script).
 
 Let's take the example of an entry that needs to be curated. On the spreadsheet shown below, the entry of alias `Rall-Morpho-L5PyrMouseV1 @ 78492b6` (that has a `SheetID==14`) lacks a `license` term (in the required fields for KG release, highlighted in green at the top), we will therefore needs the model producer (here `Yann Zerlaut`) to provide one.
 
 ![missing1](docs/example_missing.png)
 
 We also note that there is a few non-mandatory fields that are missing (`associated_dataset`, `used_software`, ...), so we will ask the model producer to confirm that such metadata are irrelevant to the study.
+
+#### With the `show_DB.py` script
+
+Alternatively, you can visualize the informations in the different databases (Catalog, Local, KG_released, ...) with the `show_DB.py` script.
+Examples:
+
+```
+python show_DB.py
+```
 
 ### 4) Interact with model producers to fix missing fields
 
