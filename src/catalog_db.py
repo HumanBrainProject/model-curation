@@ -20,10 +20,8 @@ def add_version_details_to_model(minst_dict, minst_version, client):
     script = minst_version.main_script.resolve(client)
     minst_dict['code_format'] = (script.code_format, '')
     minst_dict['license'] = (script.license, '')
-    try:
-        minst_dict['code_location'] = (script.distribution.location, '')
-    except AttributeError:
-        minst_dict['code_location'] = ('', '')
+    if script.distribution is not None:
+        minst_dict['code_location'] = script.distribution.location
         
     minst_dict['date_created'] = minst_version.timestamp
     minst_dict['version_description'] = minst_version.description
@@ -65,13 +63,13 @@ def load_model_instances(show_ignore=False,
             minst['organization'] = model.organization.resolve(client)
         except AttributeError:
             minst['organization'] = ''
-        for key, quant in zip(['brain_region', 'species', 'celltype', 'abstraction_level', 'model_of'],
+        for key, quant in zip(['brain_region', 'species', 'cell_type', 'abstraction_level', 'model_of'],
                               [model.brain_region, model.species, model.celltype, model.abstraction_level, model.model_of]):
-            try:
+            if quant is not None:
                 minst[key] = (quant.label, '')
-            except AttributeError:
+            else:
                 minst[key] = ('', '')
-        
+                
         if type(model.instances) is list:
             for modelI in model.instances:
                 MODEL_INSTANCES.append(minst.copy())
@@ -145,15 +143,14 @@ if __name__=='__main__':
     # for i, minst in zip(range(len(MODEL_INSTANCES))[::-1], MODEL_INSTANCES[::-1]):
     #     print(i+1, ') ', minst.name.replace('ModelInstance for ', ''))
 
-    from fairgraph.client import KGClient
-    from fairgraph.brainsimulation import ModelProject, ModelInstance, use_namespace
-    client = KGClient(os.environ["HBP_token"])
-    MPs_Nexus = ModelProject.list(client, api="nexus", size=10000)
-    N_Nexus = ModelProject.count(client, api="nexus")
-    MPs_Query = ModelProject.list(client, api="query", scope='latest', size=10000)
-    N_Query = ModelProject.count(client, api="query", scope='latest')
-    print(len(MPs_Nexus))
-
+    # from fairgraph.client import KGClient
+    # from fairgraph.brainsimulation import ModelProject, ModelInstance, use_namespace
+    # client = KGClient(os.environ["HBP_token"])
+    # MPs_Nexus = ModelProject.list(client, api="nexus", size=10000)
+    # N_Nexus = ModelProject.count(client, api="nexus")
+    # MPs_Query = ModelProject.list(client, api="query", scope='latest', size=10000)
+    # N_Query = ModelProject.count(client, api="query", scope='latest')
+    # print(len(MPs_Nexus))
     
     # show_list(show_ignore=True, show_ME=True, size=10000, api='nexus')#, scope='inferred')
     # show_list(show_ignore=True, show_ME=True, size=10000, api='nexus')
@@ -161,3 +158,27 @@ if __name__=='__main__':
     # import local_db
     # local_db.save_models(models)
     # pprint.pprint(models[1])
+
+    client = KGClient(os.environ["HBP_token"])
+    models = ModelProject.list(client, api='nexus',
+                                size=100000)
+
+    KEYWORD = 'Scaffold'
+    for model in models:
+        if len(model.name.split(KEYWORD))>1:
+            print(model)
+            if type(model.authors) is list:
+                for author in model.authors:
+                    print(author.resolve(client))
+            else:
+                print(model.authors.resolve(client))
+            print(model.name, '\n')
+
+    models = ModelInstance.list(client, api='nexus',
+                                size=100000)
+    for model in models:
+        if len(model.name.split(KEYWORD))>1:
+            print(model.name)
+            print(model)
+            print(model.main_script.resolve(client).distribution.location)
+            print(model.main_script.resolve(client), '\n')

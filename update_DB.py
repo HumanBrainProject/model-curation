@@ -161,35 +161,6 @@ def add_KG_metadata_to_LocalDB(model, index):
     print(' ---- Other fields:')
     KG_db.replace_fields_with_KG_entries(models[index])            
 
-def update_entry_manually(models, index, args):
-
-    if (args.key in models[index]) and (args.value is not None):
-        if type(models[index][args.key]) is str:
-            if input('Do you want to replace the value "%s" for key "%s" by: "%s" ? y/[n]\n' % (models[index][args.key], args.key, args.value[0])) in ['y', 'yes']:
-                models[index][args.key] = args.value[0]
-                print('[ok] value changed to', models[index][args.key])
-            else:
-                print('[!!] value not changed')
-        elif type(models[index][args.key]) is tuple:
-            if input('Do you want to replace the value "%s" for key "%s" by: "%s" ? y/[n]\n' % (models[index][args.key][0], args.key, args.value[0])) in ['y', 'yes']:
-                models[index][args.key] = (args.value[0], '')
-                print('[ok] value changed to', models[index][args.key])
-            else:
-                print('[!!] value not changed')
-        elif type(models[index][args.key]) is list:
-            if input('Do you want to replace the value "%s" for key "%s" by: "%s" ? y/[n]\n' % (models[index][args.key], args.key, args.value)) in ['y', 'yes']:
-                models[index][args.key] = []
-                print(args.value)
-                for elem in args.value:
-                    models[index][args.key].append((elem, ''))
-                print('[ok] value changed to', models[index][args.key])
-            else:
-                print('[!!] value not changed')
-    elif (args.key in models[index]):
-        print('The value for key %s is currently: %s' % (args.key, models[index][args.key]))
-    else:
-        pprint.pprint(models[index])
-        print('[!!] key not found')
     
 if __name__=='__main__':
 
@@ -199,8 +170,8 @@ if __name__=='__main__':
     parser.add_argument("Protocol",
                         help="""
                         type of database update to be applied, choose between:
+                        - 'Fetch-Catalog'
                         - 'Catalog-to-Local'
-                        - 'Catalog-to-Local-full-rewriting' (to restart from the CatalogDB)
                         - 'Add-KG-Metadata-to-Local'
                         - 'Local-to-Spreadsheet' 
                         - 'Local'
@@ -208,14 +179,17 @@ if __name__=='__main__':
                         - 'KG-to-Local'
                         - 'Release-Summary'
                         """)
-    parser.add_argument('-k', "--key", type=str, help="key to be updated")
+    parser.add_argument('-k', "--key", type=str,
+                        help="key to be updated")
     parser.add_argument('-v', "--value", type=str, nargs='*',
                         help="value of the key to be updated")
     
-    parser.add_argument('-sid', "--SheetID", type=int, default=-1,
+    parser.add_argument('-sid', "--SheetID", type=int, default=0,
                         help="identifier of a model instance on the spreadsheet")
-    parser.add_argument('-sidr', "--SheetID_range", type=str, default='',
-                        help="identifier of a model instance on the spreadsheet")
+    parser.add_argument('-id', "--ID", type=int, default=-1,
+                        help="identifier of a model instance")
+    parser.add_argument('-idr', "--ID_range", type=str, default='',
+                        help="range of identifier of model instances")
     parser.add_argument('-a', "--alias", type=str,
                         help="alias identifier of a model instance (as stated on the spreadsheet)")
     args = parser.parse_args()
@@ -224,28 +198,15 @@ if __name__=='__main__':
     local_db.create_a_backup_version(models) # always create a backup version first
 
     # DEAL with MODEL ID
-    if args.SheetID_range!='':
+    if args.ID_range!='':
         try:
-            ModelIDs = np.arange(int(args.SheetID_range.split('-')[0]),int(args.SheetID_range.split('-')[1])+1)-1
+            ModelIDs = np.arange(int(args.ID_range.split('-')[0]),int(args.ID_range.split('-')[1])+1)
         except BaseException as e:
-            print('\n ---> the range for sheet IDs needs to be of the form: "--SheetID_range 34-39"')
+            print('\n ---> the range for sheet IDs needs to be of the form: "--ID_range 34-39"')
+    elif args.ID>=0:
+        ModelIDs = [args.ID-1] # ** -1 for indexes in LocalDB** 
     elif args.SheetID>=1:
-        ModelIDs = [args.SheetID-1] # ** -2 for indexes in LocalDB** 
-    elif args.Protocol in ['Catalog-to-Uniminds']:
-        ModelIDs = []
-        print('Need to specify a model identifier as a Google Sheet index (i.e. *>=2*, e.g. with "--SheetID 3")')
-        
-    # ModelIDs = []
-    # if args.SheetID_range!='':
-    #     try:
-    #         ModelIDs = np.arange(int(args.SheetID_range.split('-')[0]),int(args.SheetID_range.split('-')[1])+1)-2 # ** -2 for indexes in LocalDB** 
-    #     except BaseException as e:
-    #         print('\n ---> the range for sheet IDs needs to be of the form: "--SheetID_range 34-39"')
-    # elif args.SheetID>1:
-    #     ModelIDs = [args.SheetID-2] # ** -2 for indexes in LocalDB** 
-    # elif args.Protocol in ['Local', 'Add-KG-Metadata-to-Local', 'Local-to-KG']:
-    #     print('Need to specify a model identifier as a Google Sheet index (i.e. *>=2*, e.g. with "--SheetID 3")')
-
+        ModelIDs = [args.SheetID-2] # ** -2 for indexes in LocalDB** 
         
     if args.Protocol=='Fetch-Catalog':
         catalog_models = catalog_db.load_model_instances()
@@ -258,7 +219,12 @@ if __name__=='__main__':
         local_db.create_a_backup_version(local_db.load_models())
         models = local_db.load_models()
         for i in ModelIDs:
-            update_entry_manually(models, i, args)
+            if (args.key is not None) and (args.value is None):
+                KG_db.suggest_KG_entries_and_pick_one(models, i, args.key)
+            elif args.key is not None:
+                local_db.update_entry_manually(models, i, args)
+            else:
+                print('/!\ Need to provide a key and an updated value "--key name --value \'new name blabla\' "')
             print(models[i][args.key])
         local_db.save_models(models)
     if args.Protocol=='Add-KG-Metadata-to-Local':

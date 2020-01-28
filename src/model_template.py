@@ -14,6 +14,7 @@ template = {
     "abstraction_level":("",""), # a tuple of 2 strings
     "brain_region":("",""), # a tuple of 2 strings
     "cell_type":("",""), # a set of strings
+    "species":("",""), # a set of strings
     "creation_date":"", # a string
     "model_scope":("",""), # a tuple of 2 strings
     "organization":("",""), # a tuple of 2 strings
@@ -23,7 +24,7 @@ template = {
     "associated_method":[], # a set of tuples of 2 strings
     "associated_experimental_preparation":[], # a set of tuples of 2 strings
     "used_software":[], # a set of tuples of 2 strings
-    "code_format": ("",""), # a tuple of 2 strings
+    "code_format": [], # a list of tuple of 2 strings
     "model_type":("",""), # a tuple of 2 strings
     "parameters": "", # a string
      "images":[], # list of dictionaries
