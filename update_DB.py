@@ -113,7 +113,7 @@ def from_catalog_to_local_db(new_entries_only=True):
 def add_KG_metadata_to_LocalDB(model, index):
 
     client = KG_db.KGClient(os.environ["HBP_token"])
-    print(' === FETCHING METADATA FROM KG TO ADD TO LOCAL DB === ')
+    # print(' === FETCHING METADATA FROM KG TO ADD TO LOCAL DB === ')
     print(' ---- Authors:')
     KG_db.replace_authors_with_KG_entries(models[index], client) # Authors
     print(' ---- Other fields:')
@@ -175,8 +175,8 @@ if __name__=='__main__':
     if args.Protocol=='Catalog-to-Local':
         models = from_catalog_to_local_db(new_entries_only=True)
         local_db.save_models(models)
-    # if args.Protocol=='Catalog-to-Local-full-rewriting':
-    #     from_catalog_to_local_db(new_entries_only=False) # i.e. full rewriting
+    if args.Protocol=='Catalog-to-Local-full-rewriting':
+        from_catalog_to_local_db(new_entries_only=False) # i.e. full rewriting
     if args.Protocol=='Local':
         models = local_db.load_models()
         for i in ModelIDs:

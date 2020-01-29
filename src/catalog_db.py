@@ -64,11 +64,14 @@ def load_model_instances(show_ignore=False,
             minst['author(s)'] = [get_author_details(auth.resolve(client)) for auth in model.authors]
         else:
             minst['author(s)'] = [get_author_details(model.authors.resolve(client))]
+
         try:
             minst['authors_str'] = model.authors_str(client)
         except TypeError:
-            minst['authors_str'] = '' # should mean single author
-
+            minst['authors_str'] = ''
+            for a in minst['author(s)']:
+                minst['authors_str'] += a['family_name']+', '+a['given_name']+';' 
+        print(minst['authors_str'])
         minst['description'] = model.description
         minst['private'] = model.private
         minst['collab_id'] = model.collab_id
@@ -159,7 +162,7 @@ if __name__=='__main__':
     
     # models = load_models(client)
 
-    MODEL_INSTANCES = load_model_instances(show_ignore=True, size=3, api='nexus', scope='inferred', verbose=True)
+    MODEL_INSTANCES = load_model_instances(show_ignore=True, size=30, api='nexus', scope='inferred', verbose=True)
     pprint.pprint(MODEL_INSTANCES)
     # for i, minst in zip(range(len(MODEL_INSTANCES))[::-1], MODEL_INSTANCES[::-1]):
     #     print(i+1, ') ', minst.name.replace('ModelInstance for ', ''))
