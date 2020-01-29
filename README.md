@@ -186,11 +186,11 @@ python update_DB.py Catalog-to-Local
 - We search in the Knowledge Graph for the UUID (thanks to =fairgraph=) of the provided entries of all fields in the model (when possible). We associate all entries to this `UUID` in the local database). This is done on a single model basis with:
 
 ```
-python update_DB.py Add-KG-Metadata-to-Local --SheetID 14
+python update_DB.py Check-Metadata --SheetID 14
 ```
 You can loop over entries by using the `--SheetID_range` argument:
 ```
-python update_DB.py Add-KG-Metadata-to-Local --SheetID_range 2-300
+python update_DB.py Check-Metadata --SheetID_range 2-300
 ```
 
 ----------------------------------------------------------------
@@ -256,13 +256,13 @@ python update_DB --SheetID 14 --key associated_dataset --value "Input Impedance 
 ```
 N.B. For the fields that support multiple entries, you can add multiple values in series, e.g. `--value "Name 1" "Name 2" "Name 3"`
 
-We check the Knowledge Graph metadata for those entries with `Add-KG-Metadata-to-Local` (see *Step 2*) and we update the spreadsheet:
+We check the Knowledge Graph metadata for those entries with `Check-Metadata` (see *Step 2*) and we update the spreadsheet:
 ```
-python update_DB.py Add-KG-Metadata-to-Local --SheetID 14
+python update_DB.py Check-Metadata --SheetID 14
 python update_DB.py Local-to-Spreadsheet
 ```
 
-Note that if some metadata entries are not already present in the Knowledge Graph (e.g. `model_scope`, `cell_type`, ...), it should be manually created using the [Knowledge Graph Editor](https://kg-editor.humanbrainproject.eu/). Once all metadata information do exist in the Knowledge Graph, re-run the above command `Add-KG-Metadata-to-Local` to insure the cross-linking to Knowledge Graph entries.
+Note that if some metadata entries are not already present in the Knowledge Graph (e.g. `model_scope`, `cell_type`, ...), it should be manually created using the [Knowledge Graph Editor](https://kg-editor.humanbrainproject.eu/). Once all metadata information do exist in the Knowledge Graph, re-run the above command `Check-Metadata` to insure the cross-linking to Knowledge Graph entries.
 
 You can now visualize the result in the *Model Entries* sheet:
 ![fixed1](docs/example_ME_fixed.png)

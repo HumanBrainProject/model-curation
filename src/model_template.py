@@ -15,7 +15,7 @@ template = {
     "brain_region":("",""), # a tuple of 2 strings
     "cell_type":("",""), # a set of strings
     "species":("",""), # a set of strings
-    "creation_date":"", # a string
+    # "date_created":"", # a time obkect 
     "model_scope":("",""), # a tuple of 2 strings
     "organization":("",""), # a tuple of 2 strings
     "associated_dataset":[], # a set of tuples of 2 strings
@@ -25,7 +25,6 @@ template = {
     "associated_experimental_preparation":[], # a set of tuples of 2 strings
     "used_software":[], # a set of tuples of 2 strings
     "code_format": [], # a list of tuple of 2 strings
-    "model_type":("",""), # a tuple of 2 strings
     "parameters": "", # a string
      "images":[], # list of dictionaries
     # elements of the "images" list should be of the form:

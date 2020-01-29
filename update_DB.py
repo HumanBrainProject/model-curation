@@ -90,76 +90,34 @@ def update_release_summary(models,
         spreadsheetId=spreadsheetId,
         body=batch_update_values_request_body).execute()
     
-# def from_catalog_to_local_db(new_entries_only=True):
+def from_catalog_to_local_db(new_entries_only=True):
 
-#     models = catalog_db.load_models()
+    models = catalog_db.load_models()
 
-#     if new_entries_only:
-#         previous_models = local_db.load_models()
-#         print('number of models before update from Catalog: %i' % len(previous_models))
-#         name_previous_models = [m['name'] for m in previous_models]
-#     else:
-#         previous_models = [] # no previous models to fully rewrite the DB
-#         name_previous_models = []
-    
-#     new_models = previous_models
-    
-#     for model in models:
+    if new_entries_only:
+        previous_models = local_db.load_models()
+        print('number of models before update from Catalog: %i' % len(previous_models))
+        name_previous_models = [m['name'] for m in previous_models]
+    else:
+        previous_models, name_previous_models = [], [] # no previous models to fully rewrite the DB
 
-#         # the Catalog DB can only update new entries to the DB
-#         if (model['name'] not in name_previous_models):
-
-#             model_to_be_added = model_template.template.copy()
-#             # dealing with the keys in common
-#             for key, val in model_template.template.items():
-#                 if key=='author(s)':
-#                     model_to_be_added['author(s)'] = reformat_from_catalog(key, val, model['author'])
-#                 elif key=='public':
-#                     if model['private']=='False':
-#                         model_to_be_added['public'] = 'True'
-#                 elif key in model:
-#                     model_to_be_added[key] = reformat_from_catalog(key, val, model[key])
-
-#             if model_to_be_added['owner'][0] in ['', 'None']:
-#                 model_to_be_added['owner'] = model_to_be_added['author(s)'][0]
-            
-#             if len(model['instances'])==0: # if no version, we add a fake one at submission data
-#                 model['instances'].append({'version':'None',
-#                                            'id':'', 'parameters':'',
-#                                            'source':'', 'description':'',
-#                                            'timestamp':model_to_be_added['creation_date']})
-
-#             # looping over versions
-#             for version in model['instances']:
-#                 new_models.append(model_to_be_added.copy())
-#                 new_models[-1]['timestamp'] = reformat_date_to_timestamp(version['timestamp'])
-#                 # inst['timestamp'][:19].replace(':','').replace(' ','').replace('-','')
-#                 new_models[-1]['code_location'] = version['source']
-#                 new_models[-1]['version'] = version['version']
-#                 # we add the version-description to the description
-#                 new_models[-1]['description'] += '\nversion: '+version['version']
-#                 # parameters
-#                 new_models[-1]['parameters'] = version['parameters']
-#                 new_models[-1]['identifier'] = version['id']
-
-#                 # let's insure that we have a proper alias
-#                 if new_models[-1]['alias'] in ['', 'None']:
-#                     new_models[-1]['alias'] = find_meaningfull_alias(new_models[-1]['name'])
-#                 elif len(new_models[-1]['alias'].split(' '))>1:
-#                     new_models[-1]['alias'] = concatenate_words(new_models[-1]['alias'].split(' '))
-#                 # and add the version 
-#                 new_models[-1]['alias'] += ' @ '+version_naming(version['version'])
-                    
-#     print('number of models after update from Catalog: %i' % len(new_models))
-#     return new_models
+    new_models = previous_models
+    for model in models:
+        # the Catalog DB can only update new entries to the DB
+        if (model['name'] not in name_previous_models):
+            new_models.append(model)
+    print('number of models after update from Catalog: %i' % len(new_models))
+    return new_models
 
 
 def add_KG_metadata_to_LocalDB(model, index):
+
+    client = KG_db.KGClient(os.environ["HBP_token"])
     print(' === FETCHING METADATA FROM KG TO ADD TO LOCAL DB === ')
     print(' ---- Authors:')
-    KG_db.replace_authors_with_KG_entries(models[index]) # Authors
+    KG_db.replace_authors_with_KG_entries(models[index], client) # Authors
     print(' ---- Other fields:')
-    KG_db.replace_fields_with_KG_entries(models[index])            
+    KG_db.replace_fields_with_KG_entries(models[index], client)            
 
     
 if __name__=='__main__':
@@ -172,7 +130,7 @@ if __name__=='__main__':
                         type of database update to be applied, choose between:
                         - 'Fetch-Catalog'
                         - 'Catalog-to-Local'
-                        - 'Add-KG-Metadata-to-Local'
+                        - 'Check-Metadata'
                         - 'Local-to-Spreadsheet' 
                         - 'Local'
                         - 'Local-to-KG'
@@ -206,30 +164,32 @@ if __name__=='__main__':
     elif args.ID>=0:
         ModelIDs = [args.ID-1] # ** -1 for indexes in LocalDB** 
     elif args.SheetID>=1:
-        ModelIDs = [args.SheetID-2] # ** -2 for indexes in LocalDB** 
+        ModelIDs = [args.SheetID-2] # ** -2 for indexes in LocalDB**
+    else:
+        ModelIDs = []
         
     if args.Protocol=='Fetch-Catalog':
-        catalog_models = catalog_db.load_model_instances()
+        catalog_models = catalog_db.load_model_instances(verbose=True)
         catalog_db.save_models(catalog_models)
         catalog_db.show_list(models=catalog_models)
     if args.Protocol=='Catalog-to-Local':
-        local_db.create_a_backup_version(models)
-        local_db.save_models(catalog_db.load_models())
+        models = from_catalog_to_local_db(new_entries_only=True)
+        local_db.save_models(models)
+    # if args.Protocol=='Catalog-to-Local-full-rewriting':
+    #     from_catalog_to_local_db(new_entries_only=False) # i.e. full rewriting
     if args.Protocol=='Local':
-        local_db.create_a_backup_version(local_db.load_models())
         models = local_db.load_models()
         for i in ModelIDs:
             if (args.key is not None) and (args.value is None):
-                KG_db.suggest_KG_entries_and_pick_one(models, i, args.key)
+                models[i][args.key] = KG_db.suggest_KG_entries_and_pick_one(models, i, args.key)
             elif args.key is not None:
                 local_db.update_entry_manually(models, i, args)
             else:
                 print('/!\ Need to provide a key and an updated value "--key name --value \'new name blabla\' "')
-            print(models[i][args.key])
+            print('New value for %s: \n   ' % args.key, models[i][args.key])
         local_db.save_models(models)
-    if args.Protocol=='Add-KG-Metadata-to-Local':
+    if args.Protocol=='Check-Metadata':
         models = local_db.load_models()
-        local_db.create_a_backup_version(models)
         for i in ModelIDs:
             add_KG_metadata_to_LocalDB(models, i)
         local_db.save_models(models)

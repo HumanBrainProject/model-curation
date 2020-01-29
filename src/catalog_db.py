@@ -14,7 +14,7 @@ except ImportError:
     from model_template import template
     
 
-def add_version_details_to_model(minst_dict, minst_version, client):
+def add_version_details_to_model(minst_dict, minst_version, client, verbose=False):
 
     minst_dict['version'] = minst_version.version
     script = minst_version.main_script.resolve(client)
@@ -22,7 +22,9 @@ def add_version_details_to_model(minst_dict, minst_version, client):
     minst_dict['license'] = (script.license, '')
     if script.distribution is not None:
         minst_dict['code_location'] = script.distribution.location
-        
+    elif verbose:
+        print('[!!] "code_location" missing for %s ' % (minst_version.name))
+
     minst_dict['date_created'] = minst_version.timestamp
     minst_dict['version_description'] = minst_version.description
     minst_dict['modelvalidation_id'] = minst_version.id
@@ -37,17 +39,24 @@ def get_author_details(KG_author):
  
 def load_model_instances(show_ignore=False,
                          size=100000,
-                         # scope='inferred',
+                         scope='inferred',
+                         verbose=False,
                          api='nexus'):
 
     client = KGClient(os.environ["HBP_token"])
     
     MODEL_INSTANCES = []
 
-    models = ModelProject.list(client, api=api,
-                               # scope=scope,
+    models = ModelProject.list(client,
+                               api=api,
+                               scope=scope,
                                size=size)
+        
     for model in models:
+
+        if verbose:
+            print('\n##########################################')
+            print('------ %s ------' % model.name)
         minst = template.copy()
         minst['name'] = model.name
         minst['owner'] = get_author_details(model.owners.resolve(client))
@@ -55,29 +64,39 @@ def load_model_instances(show_ignore=False,
             minst['author(s)'] = [get_author_details(auth.resolve(client)) for auth in model.authors]
         else:
             minst['author(s)'] = [get_author_details(model.authors.resolve(client))]
+        try:
+            minst['authors_str'] = model.authors_str(client)
+        except TypeError:
+            minst['authors_str'] = '' # should mean single author
+
         minst['description'] = model.description
         minst['private'] = model.private
         minst['collab_id'] = model.collab_id
         minst['alias'] = model.alias
-        try:
-            minst['organization'] = model.organization.resolve(client)
-        except AttributeError:
-            minst['organization'] = ''
-        for key, quant in zip(['brain_region', 'species', 'cell_type', 'abstraction_level', 'model_of'],
+
+        for key, quant in zip(['brain_region', 'species', 'cell_type', 'abstraction_level', 'model_scope'],
                               [model.brain_region, model.species, model.celltype, model.abstraction_level, model.model_of]):
             if quant is not None:
                 minst[key] = (quant.label, '')
-            else:
-                minst[key] = ('', '')
-                
+            elif verbose:
+                print('[!!] "%s" missing for %s ' % (key, model.name))
+        for key, quant in zip(['organization'],
+                              [model.organization]):
+            if quant is not None:
+                minst[key] = (quant.resolve(client).name, '')
+            elif verbose:
+                print('[!!] "%s" missing for %s ' % (key, model.name))
+
         if type(model.instances) is list:
             for modelI in model.instances:
-                MODEL_INSTANCES.append(minst.copy())
-                add_version_details_to_model(MODEL_INSTANCES[-1], modelI.resolve(client), client)
+                MODEL_INSTANCES.append(minst)
+                # pprint.pprint(MODEL_INSTANCES[-1])
+                # print('')
+                add_version_details_to_model(MODEL_INSTANCES[-1], modelI.resolve(client), client, verbose=verbose)
         elif type(model.instances) is KGProxy:
             modelI = model.instances
             MODEL_INSTANCES.append(minst.copy())
-            add_version_details_to_model(MODEL_INSTANCES[-1], modelI.resolve(client), client)
+            add_version_details_to_model(MODEL_INSTANCES[-1], modelI.resolve(client), client, verbose=verbose)
         elif show_ignore:
             print('Ignoring %s @ %s' % (model.name, model.date_created))
             pass # we don't care about models without specific version
@@ -88,12 +107,13 @@ def load_model_instances(show_ignore=False,
 
 
 def show_list(models=None, show_ignore=False, show_ME=True,
-              # scope='inferred',
-              size=10000, api='query'):
+              scope='inferred',
+              size=10000, api='nexus'):
     
     if models is None:
-        models = load_model_instances(show_ignore=show_ignore, size=size,
-                                      # scope=scope,
+        models = load_model_instances(show_ignore=show_ignore,
+                                      size=size,
+                                      scope=scope,
                                       api=api)
 
     for i, minst in zip(range(len(models))[::-1], models[::-1]):
@@ -139,7 +159,8 @@ if __name__=='__main__':
     
     # models = load_models(client)
 
-    # MODEL_INSTANCES = load_model_instances(show_ignore=True, size=100)
+    MODEL_INSTANCES = load_model_instances(show_ignore=True, size=3, api='nexus', scope='inferred', verbose=True)
+    pprint.pprint(MODEL_INSTANCES)
     # for i, minst in zip(range(len(MODEL_INSTANCES))[::-1], MODEL_INSTANCES[::-1]):
     #     print(i+1, ') ', minst.name.replace('ModelInstance for ', ''))
 
@@ -159,11 +180,12 @@ if __name__=='__main__':
     # local_db.save_models(models)
     # pprint.pprint(models[1])
 
+    """
     client = KGClient(os.environ["HBP_token"])
     models = ModelProject.list(client, api='nexus',
-                                size=100000)
+                                size=1)
 
-    KEYWORD = 'Scaffold'
+    KEYWORD = ' '
     for model in models:
         if len(model.name.split(KEYWORD))>1:
             print(model)
@@ -175,10 +197,11 @@ if __name__=='__main__':
             print(model.name, '\n')
 
     models = ModelInstance.list(client, api='nexus',
-                                size=100000)
+                                size=1)
     for model in models:
         if len(model.name.split(KEYWORD))>1:
             print(model.name)
             print(model)
             print(model.main_script.resolve(client).distribution.location)
             print(model.main_script.resolve(client), '\n')
+    """

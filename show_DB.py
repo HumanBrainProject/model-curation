@@ -1,20 +1,25 @@
-import sys, os, pprint, numpy
+import sys, os, pprint, numpy, time
 from src import local_db, catalog_db, KG_db, spreadsheet_db, model_template
 from processing.entries import find_meaningfull_alias, version_naming, reformat_for_spreadsheet
 
 
 def print_key_val(key, val):
+    """
+    """
     if type(val) is str:
         print('- %s:' % key)
         print('                 %s' % val)
     elif type(val) is tuple:
         print('- %s:' % key)
-        print('                * name: %s' % (val[1]))
+        print('                * name: %s' % (val[0]))
         print('                * KG ID: %s' % (val[1]))
     elif type(val) is dict:
         print('- %s:' % key)
         for k, v in val.items():
             print('                * %s: %s' % (k, v))
+    else:
+        print(key, val)
+            
 
 def nice_model_print(model):
 
@@ -58,10 +63,12 @@ if __name__=='__main__':
         models = local_db.load_models()
     elif args.DB=='Catalog':
         models = catalog_db.load_models()
+    elif args.DB=='KGnexus':
+        models = KG_db.fetch_models(api='nexus')
     elif args.DB=='KGreleased':
         models = KG_db.fetch_models(scope='released')
     elif args.DB=='KGinferred':
         models = KG_db.fetch_models(scope='inferred')
-        
+
     print_list_or_single_model(models, args)
     
