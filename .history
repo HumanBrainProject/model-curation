@@ -1,0 +1,8 @@
+git checkout working_uniminds
+python update_DB.py Local -id 32 -k authors_str -v "Tong, Rudi; Wade, Rebecca C; Bruce, Neil J"
+python update_DB.py Local -id 32 -k owner_str -v "Kokh, Daria"
+python update_DB.py Check-Metadata -id 32
+python update_DB.py Local -id 32 -k
+python update_DB.py Local-to-KG -id 32
+python update_DB.py Local -id 32 -v model_scope
+python update_DB.py Local -id 32 -k code_format

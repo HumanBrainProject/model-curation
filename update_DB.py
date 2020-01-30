@@ -1,4 +1,4 @@
-import sys, os, pprint, warnings
+import sys, os, pprint, warnings, requests
 
 from src import local_db, catalog_db, KG_db, spreadsheet_db, model_template
 from processing.entries import reformat_from_catalog, reformat_for_spreadsheet, reformat_date_to_timestamp, find_meaningfull_alias, version_naming, concatenate_words
@@ -110,15 +110,17 @@ def from_catalog_to_local_db(new_entries_only=True):
     return new_models
 
 
-def add_KG_metadata_to_LocalDB(model, index):
+def check_KG_metadata_on_LocalDB(model, index):
 
     client = KG_db.KGClient(os.environ["HBP_token"])
-    # print(' === FETCHING METADATA FROM KG TO ADD TO LOCAL DB === ')
-    print(' ---- Authors:')
-    KG_db.replace_authors_with_KG_entries(models[index], client) # Authors
+    KG_db.check_authors_with_KG_entries(models[index], client) # Authors
     print(' ---- Other fields:')
-    KG_db.replace_fields_with_KG_entries(models[index], client)            
-
+    KG_db.check_fields_with_KG_entries(models[index], client)
+    r = requests.get(models[index]['code_location'])
+    if r.ok:
+        print('[ok] The "code_location" seem to point to a valid url: '+models[index]['code_location'])
+    else:
+        print('[!!] The "code_location": %s is NOT a valid url: ' % models[index]['code_location'])
     
 if __name__=='__main__':
 
@@ -191,7 +193,7 @@ if __name__=='__main__':
     if args.Protocol=='Check-Metadata':
         models = local_db.load_models()
         for i in ModelIDs:
-            add_KG_metadata_to_LocalDB(models, i)
+            check_KG_metadata_on_LocalDB(models, i)
         local_db.save_models(models)
     if args.Protocol=='Local-to-Spreadsheet':
         models = local_db.load_models()
