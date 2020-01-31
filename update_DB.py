@@ -90,21 +90,31 @@ def update_release_summary(models,
         spreadsheetId=spreadsheetId,
         body=batch_update_values_request_body).execute()
     
-def from_catalog_to_local_db(new_entries_only=True):
+def from_catalog_to_local_db(specific_id=[],
+                             new_entries_only=True):
 
     models = catalog_db.load_models()
 
-    if new_entries_only:
+    if len(specific_id)>0:
+        local_models = local_db.load_models()
+        name_specific_ids = [local_models[i]['name'] for i in specific_id]
+        name_previous_models, previous_models = [], []
+        for m in models:
+            if m['name'] not in name_specific_ids:
+                name_previous_models.append(m['name'])
+                previous_models.append(m)
+    elif new_entries_only:
         previous_models = local_db.load_models()
         print('number of models before update from Catalog: %i' % len(previous_models))
         name_previous_models = [m['name'] for m in previous_models]
     else:
-        previous_models, name_previous_models = [], [] # no previous models to fully rewrite the DB
+        previous_models, name_previous_models = [], []
 
     new_models = previous_models
     for model in models:
         # the Catalog DB can only update new entries to the DB
         if (model['name'] not in name_previous_models):
+            print('-- ', model['name'])
             new_models.append(model)
     print('number of models after update from Catalog: %i' % len(new_models))
     return new_models
@@ -175,7 +185,8 @@ if __name__=='__main__':
         catalog_db.save_models(catalog_models)
         catalog_db.show_list(models=catalog_models)
     if args.Protocol=='Catalog-to-Local':
-        models = from_catalog_to_local_db(new_entries_only=True)
+        models = from_catalog_to_local_db(specific_id=ModelIDs,
+                                          new_entries_only=True)
         local_db.save_models(models)
     if args.Protocol=='Catalog-to-Local-full-rewriting':
         from_catalog_to_local_db(new_entries_only=False) # i.e. full rewriting

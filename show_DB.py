@@ -45,6 +45,8 @@ if __name__=='__main__':
                         help="identifier of a model instance")
     parser.add_argument('-a', "--alias", type=str,
                         help="alias identifier of a model instance (as stated on the spreadsheet) [TO BE IMPLEMENTED]")
+    parser.add_argument('-k', "--key", type=str,
+                        help="key to be shown", default='')
     args = parser.parse_args()
 
 
@@ -52,12 +54,17 @@ if __name__=='__main__':
         args.ID = args.SheetID-1
 
     def print_list_or_single_model(models, args):
-        if args.ID>0:
+        if args.ID>0 and args.key!='':
+            print('* %i) %s' % (i+1, models[args.ID-1]['name']))
+            print('        %s: %s' % (args.key, models[args.ID-1][args.key]))
+        elif args.ID>0:
             print('model %i over %i ' % (args.ID, len(models)))
             nice_model_print(models[args.ID-1])
         else:
             for i, model in zip(range(len(models))[::-1], models[::-1]):
                 print('* %i) %s' % (i+1, model['name']))
+                if args.key!='':
+                    print('     %s: %s' % (args.key, model[args.key]))
         
     if args.DB=='Local':
         models = local_db.load_models()
@@ -69,6 +76,6 @@ if __name__=='__main__':
         models = KG_db.fetch_models(scope='released')
     elif args.DB=='KGinferred':
         models = KG_db.fetch_models(scope='inferred')
-
     print_list_or_single_model(models, args)
+
     
