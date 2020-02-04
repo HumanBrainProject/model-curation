@@ -55,7 +55,7 @@ if __name__=='__main__':
 
     def print_list_or_single_model(models, args):
         if args.ID>0 and args.key!='':
-            print('* %i) %s' % (i+1, models[args.ID-1]['name']))
+            print('* %i) %s' % (args.ID, models[args.ID-1]['name']))
             print('        %s: %s' % (args.key, models[args.ID-1][args.key]))
         elif args.ID>0:
             print('model %i over %i ' % (args.ID, len(models)))
