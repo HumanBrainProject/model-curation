@@ -27,12 +27,15 @@ def load_models(filename=None):
     if filename is None:
         filename = os.path.join(pathlib.Path(__file__).resolve().parents[1],
                                 'db', 'LocalDB.pkl')
-    pkl_file = open(filename, 'rb')
-    models = pickle.load(pkl_file)
-    pkl_file.close()
-    
+    try:
+        pkl_file = open(filename, 'rb')
+        models = pickle.load(pkl_file)
+        pkl_file.close()
+        dates = np.array([time.mktime(minst['date_created'].timetuple()) for minst in models])
+    except IOError:
+        models, dates = {''}, []
+
     # we sort them by creation date (the last one is the newest)
-    dates = np.array([time.mktime(minst['date_created'].timetuple()) for minst in models])
     return [models[i] for i in np.argsort(dates)[::-1]]
 
 def show_list():

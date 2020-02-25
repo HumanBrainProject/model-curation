@@ -151,7 +151,8 @@ def find_person_in_KG(full_name, client, ask=False):
         elif len(Persons)>1:
             print('[!!] multiple persons were found for %s' % full_name)
             print(Persons)
-            return ("", "")
+            print('[ok] %s was chosen' % Persons[0])
+            return (Persons[0], KGid_Persons[0])
         else:
             print('[!!] %s was NOT found in the KG' % full_name)
             return ("", "")
@@ -357,81 +358,9 @@ def create_new_instance(model):
             
         else:
             print('Model instance not found !')
-            print('KG update takes some time, retry later...')
+            print('KG update takes some time, retry in a few minutes...')
             
         
-def from_modelvalidation_to_uniminds(model):
-
-    prerequisite_ok = True # switch to false below if not
-
-    pprint.pprint(model)
-    print('===========================================================')
-    print('  the entry *can* be pushed to the Knowledge Graph')
-    print('    please review the above information carefully')
-    print('===========================================================')
-
-    client = KGClient(os.environ["HBP_token"])
-
-    # print(model['owner'])
-    # custodian = Person.by_name(model['owner'].family_name+', '+model['owner'].given_name,
-    #                            client, api='query', scope='inferred')
-    # print(custodian)
-    list_of_authors = [Person.from_uuid(auth.family_name+', '+auth.given_name, client) for auth in model['author(s)']]
-
-    # al = AbstractionLevel.from_uuid(model['abstraction_level'][1], client, api='query')
-    # bs = BrainStructure.from_uuid(model['brain_region'][1], client, api='query')
-    # ct = CellularTarget.from_uuid(model['cell_type'][1], client, api='query')
-    # lic = License.from_uuid(model['license'][1], client, api='query')
-    # cf = ModelFormat.from_uuid(model['code_format'][1], client, api='query')
-
-    # full_minst_name = model['name']+' '+model['version']
-    # minst = ModelInstance(name=model['name'],
-    #                       identifier=hashlib.sha1(full_minst_name.encode('utf-8')).hexdigest(),
-    #                       description=model['description'],
-    #                       main_contact = custodian,
-    #                       version=model['version'],
-    #                       abstraction_level = al,
-    #                       brain_structure = bs,
-    #                       cellular_target = ct,
-    #                       license = lic,
-    #                       modelformat = cf,
-    #                       custodian = custodian,
-    #                       contributor = list_of_authors)
-
-    # minst.save(client)
-    #     print('[ok] created the ModelInstance')
-
-    #     try:
-    #         minst = ModelInstance.by_name(model['name'], client)
-
-    #         name = 'filebundle for the code of %s @ %s' % (model['name'], model['version'])
-    #         fb = FileBundle(name=name,
-    #                         description = 'file bundle for model '+name,
-    #                         identifier=hashlib.sha1(name.encode('utf-8')).hexdigest(),
-    #                         url=model['code_location'],
-    #                         model_instance = minst)
-    #         try:
-    #             fb.save(client)
-    #             print('[ok] created the FileBundle')
-    #         except BaseException as e:
-    #             print('------------- ERROR --------------------')
-    #             print(e)
-    #             print('------------- ERROR --------------------')
-    #             print('Need to manually create the FileBundle:')
-    #             print('- name:', name)
-    #             print('- description:', name)
-    #             print('- identifier:', hashlib.sha1(name.encode('utf-8')).hexdigest())
-    #             print('- url:', model['code_location'])
-    #             print('- model_instance:', minst.name)
-            
-    #     except BaseException as e:
-    #         print(e)
-    #         print('Model instance not found !')
-    #         print('KG update takes some time, retry later...')
-            
-        
-            
-    
 if __name__ == '__main__':
 
     client = KGClient()
