@@ -59,6 +59,7 @@ def load_model_instances(show_ignore=False,
             print('------ %s ------' % model.name)
         minst = template.copy()
         minst['name'] = model.name
+
         minst['owner'] = get_author_details(model.owners.resolve(client))
         if type(model.authors) is list:
             minst['author(s)'] = [get_author_details(auth.resolve(client)) for auth in model.authors]
@@ -71,7 +72,7 @@ def load_model_instances(show_ignore=False,
             minst['authors_str'] = ''
             for a in minst['author(s)']:
                 minst['authors_str'] += a['family_name']+', '+a['given_name']+';' 
-        print(minst['authors_str'])
+
         minst['description'] = model.description
         minst['private'] = model.private
         minst['collab_id'] = model.collab_id
@@ -103,6 +104,7 @@ def load_model_instances(show_ignore=False,
         elif show_ignore:
             print('Ignoring %s @ %s' % (model.name, model.date_created))
             pass # we don't care about models without specific version
+
         
     DATES = np.array([time.mktime(minst['date_created'].timetuple()) for minst in MODEL_INSTANCES])
 

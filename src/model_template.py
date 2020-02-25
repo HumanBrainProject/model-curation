@@ -6,6 +6,8 @@ template = {
     "name":"", # a string
     "description":"", # a string
     "author(s)":[], # a set of tuples of 2 strings
+    "authors_str":'', # a string
+    "owner_str":'', # a string
     "version":"", # a string
     "identifier":"", # a string -> generated during model curation !
     "code_location": "", # a string

@@ -107,18 +107,19 @@ def get_model_attributes(client):
 
 def find_person_in_KG(full_name, client, ask=False):
 
-    name_decompositions = [full_name,
-                           full_name.split(',')[-1],
-                           full_name.split(',')[0],
-                           full_name.split('.')[-1],
-                           full_name.split('.')[0]]
+    name_decompositions = [full_name]
+    # name_decompositions = [full_name,
+    #                        full_name.split(',')[-1],
+    #                        full_name.split(',')[0],
+    #                        full_name.split('.')[-1],
+    #                        full_name.split('.')[0]]
     Persons, KGid_Persons, Emails = [], [], []
     for name in name_decompositions:
         person = Person.by_name(name, client, api='query')
         if person is not None:
             if person.identifier not in KGid_Persons:
                 KGid_Persons.append(person.identifier)
-                Persons.append(person.family_name+', '+person.given_name)
+                Persons.append('%s, %s' % (person.family_name, person.given_name))
                 Emails.append(person.email)
                 
     person = ("", "") # by default
