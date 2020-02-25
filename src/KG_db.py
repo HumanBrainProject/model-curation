@@ -115,7 +115,7 @@ def find_person_in_KG(full_name, client, ask=False):
     #                        full_name.split('.')[0]]
     Persons, KGid_Persons, Emails = [], [], []
     for name in name_decompositions:
-        person = Person.by_name(name, client, api='query')
+        person = Person.by_name(name, client)
         if person is not None:
             if person.identifier not in KGid_Persons:
                 KGid_Persons.append(person.identifier)
@@ -172,14 +172,17 @@ def check_authors_with_KG_entries(model, client):
             
     model['owner'] = find_person_in_KG(model['owner_str'], client)
     print(' ---- Authors: (based on "authors_str" %s )' % model['authors_str'])
-    Author_list = model['authors_str'].split(';')
+    Author_list = model['authors_str'].split('; ')
     model['author(s)'] = [] # reinitialized
     for author in Author_list:
         auth = find_person_in_KG(author, client)
         if auth[0] is "":
             success_flag = False
         model['author(s)'].append(auth)
-    return success_flag
+
+
+
+        return success_flag
 
 
 def find_entry_in_KG(name, cls, client):
