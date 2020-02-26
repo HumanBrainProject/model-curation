@@ -16,3 +16,7 @@ pip install -U ./fairgraph
 pip install -U google-api-python-client
 pip install -U google-auth-httplib2
 pip install -U google-auth-oauthlib
+# other Google Sheet API
+pip install -U gspread
+pip install -U gspread_formatting
+pip install json

@@ -1,10 +1,11 @@
-import os, sys, pathlib
-sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 import numpy as np
 import matplotlib.pylab as plt
 import datetime
 
-from src import local_db
+import os, sys, pathlib
+sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
+
+from mc_src import local_db
 
 models = local_db.load_models()
 

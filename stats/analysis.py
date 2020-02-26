@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pylab as plt
 import datetime
 
-from src import local_db
+from mc_src import local_db
 
 models = local_db.load_models()
 
