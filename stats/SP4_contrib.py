@@ -20,47 +20,24 @@ scope = ['https://spreadsheets.google.com/feeds']
 credentials = ServiceAccountCredentials.from_json_keyfile_name('service-account-credentials.json', scope)
 gc = gspread.authorize(credentials)
 
-sc = gc.open_by_url("https://docs.google.com/spreadsheets/d/%s/" % os.environ["SGA2_SP6_SPREADSHEET_ID"])
+sc = gc.open_by_url("https://docs.google.com/spreadsheets/d/%s/" % os.environ["SGA2_SP4_SPREADSHEET_ID"])
+
+req_sheets = ['Signalling cascades', 'Inhibition and calcium cascades', 'Molecular Signalling Cascades' , 'Molecular Modelling', 'Multiscale', 'Human neurons', 'Basal ganglia', 'Cerebellum', 'Hippocampus', 'SSCx', 'Whole mouse brain']
+
 
 COMPONENTS = {
     
-    'Signalling cascades':{'modelscope':'subcellular',
-                           'authors':['Kramer, Andrei', 'Tewatia, Parul', 'Eriksson, Olivia']}, # if one of the authors matches, the model is included
+    'Destexhe group':{'authors':['Destexhe, Alain']},
     
-    'Inhibition and calcium cascades':{'authors':['Kramer, Andrei', 'Eriksson, Olivia', 'Serna, Pablo', 'Triller, Antoine']},
-    
-    'Molecular Signalling Cascades':{'authors':['Bruce, Neil', 'Narzi, Daniele', 'Trpevski, Daniel']},
-    
-    'Molecular Modelling':{'modelscope':'subcellular: molecular',
-                           'authors':['Capelli, Riccardo', 'Kokh, Daria', 'Bruce, Neil']},
-    
-    'Multiscale':{'brain_structure':'striatum',
-                  'authors':['Lindroos, Robert', 'Kozlov, Alexander', 'Keller, Daniel', 'Tewatia, Parul']},
-    
-    'Human neurons':{'brain_structure':'cerebral cortex',
-                     'authors':['Eyal, Guy']},
-    
-    'Basal ganglia':{'brain_structure':'basal ganglia',
-                     'authors':['Lindroos, Robert', 'Kozlov, Alexander', 'Johansson, Yvonne', 'Frost Nylen, Johanna']},
-    
-    'Cerebellum':{'brain_structure':'cerebellum',
-                  'authors':['Masoli, Stefano', 'Rizza, Martina', 'Tognolina, Marialuisa', 'Locatelli, Francesca',
-                             'Nedelescu, Hermina', 'Muñoz, Alberto', 'Gagliano, Giuseppe', 'Geminiani, Alice', 'Casellato, Claudia','Soda, Teresa']},
-    
-    'Hippocampus':{'authors':['Romandi, Armando', 'Migliore, Michele', 'Kali, Szabolcs']},
-    
-    'SSCx':{'authors':['Alonso, Lidia', 'Merchan Perez, Angel', 'BBP-team']},
-    
-    'Whole mouse brain':{'authors':['Csaba, Eroe', 'Dimitri, Rodarie']}
+    'Einevoll group':{'authors':['Einevoll, Gaute', 'Ness, Torbjørn V.']},
 }
-
 
 
 if len(sys.argv)<2:
     print("""
     need to provide an argument, either: 
     - get-KG-released
-    - ANNEX-B
+    - Sheet
     - ANNEX-C
     - ANNEX-D
     """)
@@ -110,13 +87,13 @@ elif sys.argv[-1]=='get-KG-released':
             MODELS[model.name]['dataset_url'] = ''
 
 
-    with open('db/SP6_KG_released.json', 'wb') as fout:
+    with open('db/SP4_KG_released.json', 'wb') as fout:
         pickle.dump(MODELS, fout)
 
 
 elif sys.argv[-1]=='ANNEX-D':
 
-    with open('db/SP6_KG_released.json', 'rb') as fout:
+    with open('db/SP4_KG_released.json', 'rb') as fout:
         MODELS = pickle.load(fout)
 
     lifecycle_col = 0 # A
@@ -148,7 +125,7 @@ elif sys.argv[-1]=='ANNEX-D':
                             textFormat=gf.textFormat(fontSize=base_fontsize, foregroundColor=gf.color(0,0,0))
                           )
 
-    req_data.append(["Annex D: Models released in EBrains KG from SP6 Model Components"])
+    req_data.append(["Annex D: Models released in EBrains KG from SP4 Model Components"])
     fmt = gf.cellFormat(
                         backgroundColor=gf.color(1,1,1),
                         textFormat=gf.textFormat(bold=True, fontSize=base_fontsize*2, foregroundColor=gf.color(0.02,0.3,0.55))
@@ -236,15 +213,28 @@ elif sys.argv[-1]=='ANNEX-D':
         gf.format_cell_range(worksheet, gspread.utils.rowcol_to_a1(row+1,1)+':' + gspread.utils.rowcol_to_a1(row+1, len(ouput_col_headings)), req_data_format[row])
 
     
-elif sys.argv[-1]=='ANNEX-B':
+elif sys.argv[-1]=='Sheet':
 
+    with open('db/SP4_KG_released.json', 'rb') as fout:
+        MODELS = pickle.load(fout)
+
+    output_sheet_name = "KG Models released"
+
+    # COLUMNS
+    ouput_col_headings = ["Model Entry", "Custodian", "Associated Dataset", "Brain Region", "Species"]
     
-    lifecycle_col = 0 # A
-    publication_col = 0 # A
-    filter_col = 5 # F: Artefact Type
-    output_sheet_name = "Extracted Data - Annex B - New"
-    ouput_cols = [2, 17, 3, 0, -2, -1, 15] # in order: C, R, D, A, -2, -1, P
-    ouput_col_headings = ["Brain Region", "Species", "Cell Type", "Artefact Name", "Life Cycle Stage", "Publication", "Dissemination Status"]
+    def build_str_array(name, model):
+        # FUNCTION TO BUILD THE STRING CORRESPONDING TO THOSE COLUMNS
+        dataset_string = '=HYPERLINK("%s","%s")' % (model['dataset_url'], model['used_dataset'])
+        if ('molecular' in model['modelscope']) or ('subcellular' in model['modelscope']):
+            dataset_string = 'sim. data stored and documented within model entry --> SGA3 for Simulation Datasets in KG!'
+            
+        return ['=HYPERLINK("%s","%s")' % (model['url'], name),
+                '=HYPERLINK("%s","%s")' % (model['custodian_url'], model['custodian']),
+                dataset_string,
+                '%s' % model['brain_structure'],
+                '%s' % model['dataset_species']]
+    
     base_fontsize = 10
 
     req_data = []
@@ -254,8 +244,7 @@ elif sys.argv[-1]=='ANNEX-B':
                             textFormat=gf.textFormat(fontSize=base_fontsize, foregroundColor=gf.color(0,0,0))
                           )
 
-
-    req_data.append(["Annex B: Summary of Dissemination Status of SP6 SGA2 Model Components"])
+    req_data.append(["Models released in EBrains KG from SP4 Model Components"])
     fmt = gf.cellFormat(
                         backgroundColor=gf.color(1,1,1),
                         textFormat=gf.textFormat(bold=True, fontSize=base_fontsize*2, foregroundColor=gf.color(0.02,0.3,0.55))
@@ -271,21 +260,26 @@ elif sys.argv[-1]=='ANNEX-B':
                     )
     req_data_format.append(fmt)
 
-    lifecycle = ""
-    publication = ""
-    for sheetname in COMPONENTS.keys():
-        worksheet = sc.worksheet(sheetname)
-        # get all data as list of lists (each row is a list)
-        worksheet_list = worksheet.get_all_values()
+    for sheetname, filters in COMPONENTS.items():
         req_rows = []
-        for row in worksheet_list:
-            if str(row[lifecycle_col]).lower() == "lifecycle stage":
-                lifecycle = row[lifecycle_col+1]
-            if str(row[publication_col]).lower() == "publication":
-                publication = row[publication_col+1]
-            if str(row[filter_col]).lower() == "model":
-                row.extend([lifecycle, publication])
-                req_rows.append([row[i] for i in ouput_cols])        
+        # find models that match the filters
+        for name, model in MODELS.items():
+
+            # first the author condition
+            author_condition = False
+            for author in filters['authors']:
+                if author in model['contributor']:
+                    author_condition = True
+                    
+            # then the other filters
+            if len(filters.keys())>1: # if not only authors, we check for other fields
+                for key, val in filters.items():
+                    if author_condition and (key!='authors') and model[key]==val: # this model fills the criteria
+                        req_rows.append(build_str_array(name, model))
+            elif author_condition: # author condition is enough
+                req_rows.append(build_str_array(name, model))
+                        
+    
         print("{} -> {}".format(sheetname,len(req_rows)))
         req_data.append(["","","","","","",""])
         req_data_format.append(blank_fmt)
@@ -297,15 +291,20 @@ elif sys.argv[-1]=='ANNEX-B':
         req_data_format.append(fmt)
         req_data.extend(req_rows)
         req_data_format.extend([blank_fmt]*len(req_rows))
+                
+    req_data.append(["","","","","","",""])
+    req_data_format.append(blank_fmt)
+    req_data_format.extend([blank_fmt]*len(req_rows))
 
     try:    
         sc.del_worksheet(sc.worksheet(output_sheet_name))
     except Exception:
         pass
+    
     worksheet = sc.add_worksheet(title=output_sheet_name, rows=len(req_data), cols=len(ouput_col_headings))
     sc.values_update(
         '{}!A1'.format(output_sheet_name),
-        params={'valueInputOption': 'RAW'}, 
+        params={'valueInputOption': 'USER_ENTERED'}, 
         body={'values': req_data}
     )
 
@@ -332,5 +331,3 @@ elif sys.argv[-1]=='ANNEX-B':
         if req_data_format[row] == blank_fmt: # temporary workaround to overcome google sheets API limit (100 requests per 100 seconds):
             continue
         gf.format_cell_range(worksheet, gspread.utils.rowcol_to_a1(row+1,1)+':' + gspread.utils.rowcol_to_a1(row+1, len(ouput_col_headings)), req_data_format[row])
-
-
