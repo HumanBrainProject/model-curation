@@ -6,7 +6,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
-from src.model_template import template
+from mc_src.model_template import template
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']

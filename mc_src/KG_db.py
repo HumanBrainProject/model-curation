@@ -175,14 +175,13 @@ def check_authors_with_KG_entries(model, client):
     Author_list = model['authors_str'].split('; ')
     model['author(s)'] = [] # reinitialized
     for author in Author_list:
+        print(author)
         auth = find_person_in_KG(author, client)
         if auth[0] is "":
             success_flag = False
         model['author(s)'].append(auth)
 
-
-
-        return success_flag
+    return success_flag
 
 
 def find_entry_in_KG(name, cls, client):

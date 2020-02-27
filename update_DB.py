@@ -1,6 +1,6 @@
 import sys, os, pprint, warnings, requests
 
-from src import local_db, catalog_db, KG_db, spreadsheet_db, model_template
+from mc_src import local_db, catalog_db, KG_db, spreadsheet_db, model_template
 from processing.entries import reformat_from_catalog, reformat_for_spreadsheet, reformat_date_to_timestamp, find_meaningfull_alias, version_naming, concatenate_words
 
 

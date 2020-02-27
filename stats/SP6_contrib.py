@@ -20,18 +20,31 @@ req_sheets = ['Signalling cascades', 'Inhibition and calcium cascades', 'Molecul
 
 
 COMPONENTS = {
-    'Signalling cascades':{'modelscope':'subcellular'},
-    'Inhibition and calcium cascades':{'modelscope':'subcellular'},
-    'Molecular Signalling Cascades':{'modelscope':'subcellular'},
-    'Molecular Modelling':{'modelscope':'subcellular'},
-    'Multiscale':{'brain_structure':'striatum'},
-    'Human neurons':{'brain_structure':'cerebral cortex'},
-    'Basal ganglia':{'brain_structure':'basal ganglia'},
-    'Cerebellum':{'brain_structure':'cerebellum'},
-    'Hippocampus':{'brain_structure':'hippocampus'},
-    'SSCx':{'brain_structure':'somatosensory cortex'},
-    'Whole mouse brain':{'brain_structure':'whole brain'}
+    'Signalling cascades':{'modelscope':'subcellular',
+                           'authors':['Kramer, Andrei', 'Tewatia, Parul', 'Eriksson, Olivia']},
+    'Inhibition and calcium cascades':{'modelscope':'', # TO BE FILLED
+                                       'authors':['Kramer, Andrei', 'Hellgren Kotaleski, Jeanette', 'Eriksson, Olivia', 'Serna, Pablo', 'Triller, Antoine']},
+    'Molecular Signalling Cascades':{'modelscope':'subcellular: molecular',
+                                     'authors':['Bruce, Neil', 'Narzi, Daniele', 'Hellgren Kotaleski, Jeanette']},
+    'Molecular Modelling':{'modelscope':'subcellular: molecular',
+                           'authors':['Bruce, Neil', 'Capelli, Riccardo', 'Kokh, Daria']},
+    'Multiscale':{'brain_structure':'striatum',
+                  'authors':['Bruce, Neil', 'Capelli, Riccardo', 'Kokh, Daria']},
+    'Human neurons':{'brain_structure':'cerebral cortex',
+                     'authors':['Eyal, Guy']},
+    'Basal ganglia':{'brain_structure':'basal ganglia',
+                     'authors':['Lindroos, Robert', 'Kozlov, Alexander', 'Johansson, Yvonne', 'Frost Nylen, Johanna']},
+    'Cerebellum':{'brain_structure':'cerebellum',
+                  'authors':['Masoli, Stefano', 'Rizza, Martina', 'Tognolina, Marialuisa', 'Locatelli, Francesca',
+                             'Nedelescu, Hermina', 'Muñoz, Alberto', 'Gagliano, Giuseppe', 'Geminiani, Alice', 'Casellato, Claudia','Soda, Teresa']},
+    'Hippocampus':{'brain_structure':'hippocampus',
+                   'authors':['Romandi, Armando']},
+    'SSCx':{'brain_structure':'somatosensory cortex',
+            'authors':['Alonso, Lidia', 'Merchan Perez, Angel', 'BBP-team']},
+    'Whole mouse brain':{'brain_structure':'whole brain',
+                         'authors':['Csaba, Eroe', 'Dimitri, Rodarie']}
 }
+
 
 
 if len(sys.argv)<2:
@@ -88,19 +101,17 @@ elif sys.argv[-1]=='get-KG-released':
         pickle.dump(MODELS, fout)
 
 
-elif sys.argv[-1]=='D':
+elif sys.argv[-1]=='ANNEX-D':
 
     with open('db/SP6_KG_released.json', 'rb') as fout:
         MODELS = pickle.load(fout)
 
-    print(MODELS)
-    
     lifecycle_col = 0 # A
     publication_col = 0 # A
     filter_col = 5 # F: Artefact Type
     output_sheet_name = "KG Models (curated) - Annex D"
 
-    ouput_col_headings = ["Model Name", "Main contact", "Associated Dataset", "Brain Region", "Species"]
+    ouput_col_headings = ["Model Name", "Custodian", "Associated Dataset", "Brain Region", "Species"]
     base_fontsize = 10
 
     req_data = []
@@ -130,8 +141,16 @@ elif sys.argv[-1]=='D':
         req_rows = []
         # find models that match the filters
         for name, model in MODELS.items():
+
+            # first the author condition
+            author_condition = False
+            for author in filters['authors']:
+                if author in model['contributor']:
+                    author_condition = True
+                    
+            # then the other filters
             for key, val in filters.items():
-                if model[key]==val: # this model fills the criteria
+                if author_condition and (key!='authors') and model[key]==val: # this model fills the criteria
                     req_rows.append([name]+[model[k] for k in ['custodian', 'used_dataset', 'brain_structure', 'dataset_species']])
                     
         print("{} -> {}".format(sheetname,len(req_rows)))
@@ -146,6 +165,9 @@ elif sys.argv[-1]=='D':
         req_data.extend(req_rows)
         req_data_format.extend([blank_fmt]*len(req_rows))
                 
+    req_data.append(["","","","","","",""])
+    req_data_format.append(blank_fmt)
+    req_data_format.extend([blank_fmt]*len(req_rows))
 
     try:    
         sc.del_worksheet(sc.worksheet(output_sheet_name))
@@ -184,7 +206,7 @@ elif sys.argv[-1]=='D':
 
 
     
-elif sys.argv[-1]=='B':
+elif sys.argv[-1]=='ANNEX-B':
 
     
     lifecycle_col = 0 # A

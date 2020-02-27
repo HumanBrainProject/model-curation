@@ -1,5 +1,5 @@
 import sys, os, pprint, numpy, time
-from src import local_db, catalog_db, KG_db, spreadsheet_db, model_template
+from mc_src import local_db, catalog_db, KG_db, spreadsheet_db, model_template
 from processing.entries import find_meaningfull_alias, version_naming, reformat_for_spreadsheet
 
 
