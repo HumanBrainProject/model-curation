@@ -18,6 +18,12 @@ The curation pipeline is depicted in the following schematic:
 
 ## Installation and environment setup
 
+### Clone the repository:
+
+```
+git clone https://github.com/yzerlaut/model-curation.git
+```
+
 ### Installing dependencies
 
 You can install the dependencies of this module by running:
@@ -31,50 +37,30 @@ The dependencies include:
 1. Some python modules of the Human Brain Project ecosystem:
 
 	- [fairgraph](https://github.com/HumanBrainProject/fairgraph): A high-level Python API for the HBP Knowledge Graph
-	- [hbp-validation-client](https://github.com/HumanBrainProject/hbp-validation-client)
-	- [hbp-validation-framework](https://github.com/HumanBrainProject/hbp-validation-client): A Python package for working with the Human Brain Project Model Validation Framework.
 
 2. The Python API to work with Google Spreadsheets:
 
    - [Google Spreadsheet API](https://developers.google.com/sheets/api). Follow the instructions to get the credentials at: https://developers.google.com/sheets/api/quickstart/python
 
-### Installing the `model-curation` module
+3. gspread
 
-Clone the repository:
-
-```
-git clone https://github.com/yzerlaut/model-curation.git
-```
 
 ### Setting up your environmment
 
 Fill the following file (`env_variables.py`) with the credentials of the validation framework and the informations related to you installation (ask for the ):
+
 ```
 import os
 
 # location of your json files for the HBP logins
-hbp_token_file=os.path.join(os.path.expanduser("~"), "Downloads", "HBP.json") 
+hbp_token_file=os.path.join(os.path.expanduser("~"), "Downloads", "HBP.json")
 hbp_storage_token_file=os.path.join(os.path.expanduser("~"), "Downloads", "config.json")
-
-# location of your hbp-validation-framework repository
-validation_framework_path = os.path.join(os.path.expanduser("~"), "work", "hbp_validation_framework")
-# credentials required to fetch informations from the PostgreSQL database of the Model Catalog
-VALIDATION_FRAMEWORK_INFOS = {    
-    "DJANGO_SECRET_KEY":"'...'",
-    "HBP_OIDC_CLIENT_ID":"...",
-    "HBP_OIDC_CLIENT_ID":"...",
-    "HBP_OIDC_CLIENT_SECRET":"...",
-    "HBP_OIDC_CLIENT_SECRET":"...",
-    "VALIDATION_SERVICE_PASSWORD":"...",
-    "VALIDATION_SERVICE_HOST":"...",
-    "VALIDATION_SERVICE_PORT":"...",
-}
 
 # ID of Google Spreadsheets
 SPREADSHEETS_ID = {
     "MODEL_CURATION_SPREADSHEET":"...",
-    "MODEL_CURATION_SPREADSHEET_PREVIOUS":"...",
     "SGA2_SP6_SPREADSHEET_ID" :"...",
+    "SGA2_SP4_SPREADSHEET_ID" : "...",
     "SGA2_SP3_SPREADSHEET_ID" : "...",
 }
 ```
@@ -99,13 +85,6 @@ This should output something like:
 [ok] MODEL_CURATION_SPREADSHEET_PREVIOUS
 [ok] SGA2_SP6_SPREADSHEET_ID
 [ok] SGA2_SP3_SPREADSHEET_ID
------VALIDATION FRAMEWORK INFOS -------------------
-[ok] DJANGO_SECRET_KEY
-[ok] HBP_OIDC_CLIENT_ID
-[ok] HBP_OIDC_CLIENT_SECRET
-[ok] VALIDATION_SERVICE_PASSWORD
-[ok] VALIDATION_SERVICE_HOST
-[ok] VALIDATION_SERVICE_PORT
 ``` 
 
 You should should be set up !
@@ -186,22 +165,17 @@ python update_DB.py Catalog-to-Local
 - We search in the Knowledge Graph for the UUID (thanks to =fairgraph=) of the provided entries of all fields in the model (when possible). We associate all entries to this `UUID` in the local database). This is done on a single model basis with:
 
 ```
-python update_DB.py Check-Metadata --SheetID 14
+python update_DB.py Check-Metadata -id 14
 ```
-You can loop over entries by using the `--SheetID_range` argument:
+You can loop over entries by using the `-id_range` argument:
 ```
-python update_DB.py Check-Metadata --SheetID_range 2-300
+python update_DB.py Check-Metadata -idr 2-300 # (or "--ID_range 2-300")
 ```
 
 ----------------------------------------------------------------
 Note that this only happens new models to the Local database, it doesn't rewrite the full local database. If you want to (re)-start from scratch from the information contained in the Model Catalog, use:
 ```
 python update_DB.py Catalog-to-DB-full-rewriting
-```
-
-If you want to restart from scratch while keeping your manual updates of the entries (i.e. the modifications resulting from the interactions with the users done in *Step 5*) **TO BE IMPLEMENTED**
-```
-python update_DB.py Catalog-to-DB-full-rewriting-with-stored-changes
 ```
 
 N.B. If the model is released in the KG and the "version name" does not match any of the version name found in the Catalog. Assuming that their is only one version (what is the case), for the "version name" in the LocalDB, we take the one of the KG not of the Catalog. This only happens for this set of models: (https://kg.ebrains.eu/search/?q=granule&facet_type[0]=Contributor#Contributor/2c916596118aa1ae6070497dae75dda2)
@@ -247,18 +221,18 @@ We therefore want to update the two following missing fields:
 
 ### 5) Update the entries
 
-We fix the entries manually in the Local database using a command-line tool. The tool works on a entry-by-entry basis for a `python update_DB --SheetID <ID> --key <KEY> --value <VALUE>`, not that `<VALUE>` can be either a name or an UUID in the Knowledge Graph.
+We fix the entries manually in the Local database using a command-line tool. The tool works on a entry-by-entry basis for a `python update_DB -id <ID> --key <KEY> --value <VALUE>`, not that `<VALUE>` can be either a name or an UUID in the Knowledge Graph.
 
 For the example above, we run:
 ```
-python update_DB --SheetID 14 --key license --value "CC BY-NC-SA 4.0"
-python update_DB --SheetID 14 --key associated_dataset --value "Input Impedance Recordings in Neocortical Pyramidal cells"
+python update_DB -id 14 --key license --value "CC BY-NC-SA 4.0"
+python update_DB -id 14 --key associated_dataset --value "Input Impedance Recordings in Neocortical Pyramidal cells"
 ```
 N.B. For the fields that support multiple entries, you can add multiple values in series, e.g. `--value "Name 1" "Name 2" "Name 3"`
 
 We check the Knowledge Graph metadata for those entries with `Check-Metadata` (see *Step 2*) and we update the spreadsheet:
 ```
-python update_DB.py Check-Metadata --SheetID 14
+python update_DB.py Check-Metadata -id 14
 python update_DB.py Local-to-Spreadsheet
 ```
 
@@ -275,7 +249,7 @@ And in the *Release Summary* sheet:
 Now that we have insured that all metadata were accurate and had a correspondance in the Knowledge Graph, we can create the new `ModelInstance` entry in the Knowledge graph with:
 
 ```
-python update_DB Local-to-KG -sid 14 # "-sid" is the shortcut for "--SheetID"
+python update_DB Local-to-KG -id 14
 ```
 
 This command invites you to review the model entry. If everything is fine, you can validate the submission.

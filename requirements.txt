@@ -1,22 +1,6 @@
-# HBP validation framework
-git clone https://github.com/HumanBrainProject/hbp-validation-client.git
-pip install -r hbp-validation-client/requirements.txt
-pip install -U ./hbp-validation-client
-git clone https://github.com/HumanBrainProject/pyxus.git pyxus_src
-pip install -r pyxus_src/pyxus/requirements.txt
-pip install -U pyxus_src/pyxus
-git clone https://github.com/HumanBrainProject/hbp-validation-framework.git
-pip install -r hbp-validation-framework/requirements.txt
-pip install -r validation_service/requirements.txt
-# fairgraph
-git clone -b kgquery --single_branch https://github.com/yzerlaut/fairgraph.git
-pip install -r ./fairgraph/requirements.txt
-pip install -U ./fairgraph
-# Google Sheet API
-pip install -U google-api-python-client
-pip install -U google-auth-httplib2
-pip install -U google-auth-oauthlib
-# other Google Sheet API
-pip install -U gspread
-pip install -U gspread_formatting
-pip install json
+git+https://github.com/yzerlaut/fairgraph.git@aa3a3f3c49ec0ff19e52a18088ad5bf52cf8f3f3
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+gspread
+gspread_formatting
